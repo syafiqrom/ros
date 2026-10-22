@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('brand');
             $table->string('model');
             $table->integer('capacity');
-            $table->string('status')->default('available');
+            $table->string('status')->default('Available');
             $table->timestamps();
         });
     }
