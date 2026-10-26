@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, Truck, FolderGit2, LayoutGrid } from 'lucide-react';
+import { BookOpen, FolderGit2, LayoutGrid, Truck } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -14,7 +14,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as vehicles } from '@/routes/vehicles';
+import vehicles from '@/routes/vehicles';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -25,9 +25,9 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Vehicles',
-        href: vehicles(),
+        href: vehicles.index(),
         icon: Truck,
-    },
+    }
 ];
 
 const footerNavItems: NavItem[] = [
@@ -49,10 +49,11 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo />
-                            </Link>
+                        <SidebarMenuButton
+                            size="lg"
+                            render={<Link href={dashboard()} prefetch />}
+                        >
+                            <AppLogo />
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

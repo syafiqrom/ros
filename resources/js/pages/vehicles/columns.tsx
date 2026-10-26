@@ -15,7 +15,10 @@ export type Vehicle = {
     plate_number: string
     brand: string
     model: string
-    capacity: number
+    capacity_metric_ton: string
+    capacity_cubic_meter: string
+    cost_per_km: string
+    cost_per_hour: string
     status: string
 }
 
@@ -26,9 +29,10 @@ export const columns = columnHelper.columns([
         id: "select",
         header: ({ table }) => (
             <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                checked={table.getIsAllPageRowsSelected()}
+                indeterminate={
+                    table.getIsSomePageRowsSelected() &&
+                    !table.getIsAllPageRowsSelected()
                 }
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
@@ -57,7 +61,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("brand", { header: "Brand" }),
     columnHelper.accessor("model", { header: "Model" }),
-    columnHelper.accessor("capacity", { header: "Capacity" }),
+    columnHelper.accessor("capacity_metric_ton", { header: "Capacity" }),
     columnHelper.accessor("status", { header: "Status" }),
     columnHelper.display({
         id: "actions",
