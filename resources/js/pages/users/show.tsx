@@ -65,11 +65,18 @@ export default function ShowUser({ user }: { user: UserRow }) {
                     </CardContent>
 
                     <CardFooter className="gap-2">
-                        <Button asChild>
-                            <Link href={edit(user.id)}>Edit</Link>
+                        <Button
+                            render={<Link href={edit(user.id)} />}
+                            nativeButton={false}
+                        >
+                            Edit
                         </Button>
-                        <Button variant="outline" asChild>
-                            <Link href={usersIndex()}>Back to list</Link>
+                        <Button
+                            variant="outline"
+                            render={<Link href={usersIndex()} />}
+                            nativeButton={false}
+                        >
+                            Back to list
                         </Button>
                     </CardFooter>
                 </Card>
