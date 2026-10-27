@@ -2,19 +2,11 @@
 
 import { createColumnHelper } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-
+import { Pencil, Copy, Eye } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
-import { type DataTableFeatures } from "./data-table-features"
+import { type DataTableFeatures } from "@/components/ui/data-table-features"
 import { edit } from "@/routes/vehicles"
 import { Link } from "@inertiajs/react"
 
@@ -23,7 +15,10 @@ export type Vehicle = {
     plate_number: string
     brand: string
     model: string
-    capacity: number
+    capacity_metric_ton: string
+    capacity_cubic_meter: string
+    cost_per_km: string
+    cost_per_hour: string
     status: string
 }
 
@@ -34,9 +29,10 @@ export const columns = columnHelper.columns([
         id: "select",
         header: ({ table }) => (
             <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                checked={table.getIsAllPageRowsSelected()}
+                indeterminate={
+                    table.getIsSomePageRowsSelected() &&
+                    !table.getIsAllPageRowsSelected()
                 }
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
@@ -65,7 +61,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("brand", { header: "Brand" }),
     columnHelper.accessor("model", { header: "Model" }),
-    columnHelper.accessor("capacity", { header: "Capacity" }),
+    columnHelper.accessor("capacity_metric_ton", { header: "Capacity" }),
     columnHelper.accessor("status", { header: "Status" }),
     columnHelper.display({
         id: "actions",
@@ -73,26 +69,13 @@ export const columns = columnHelper.columns([
         cell: ({ row }) => {
             const vehicle = row.original
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(String(vehicle.id))}
-                        >
-                            Copy vehicle ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link href={edit(vehicle.id)}>Edit vehicle</Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div>
+                    <Button variant="ghost" size="icon">
+                        <Link href={edit(vehicle.id)}>
+                            <Pencil className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>
             )
         },
     }),

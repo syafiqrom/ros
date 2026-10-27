@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vehicle;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -13,7 +12,7 @@ class VehicleController extends Controller
     public function index()
     {
         return Inertia::render('vehicles/index', [
-            'vehicles' => Vehicle::select('id', 'plate_number', 'brand', 'model', 'capacity', 'status')->get(),
+            'vehicles' => Vehicle::latest()->get(),
         ]);
     }
 
@@ -22,19 +21,13 @@ class VehicleController extends Controller
         return Inertia::render('vehicles/create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        $validated = $request->validate([
-            'plate_number' => ['required', 'string', 'max:20', 'unique:vehicles,plate_number'],
-            'brand' => ['required', 'string', 'max:255'],
-            'model' => ['required', 'string', 'max:255'],
-            'capacity' => ['required', 'integer', 'min:1', 'max:100'],
-            'status' => ['required', 'in:Available,In Use,Maintenance'],
-        ]);
+        $validated = $request->validate($this->rules());
 
         Vehicle::create($validated);
 
-        return redirect()->route('vehicles.index');
+        return redirect()->route('vehicles.index')->with('success', 'Vehicle added.');
     }
 
     public function edit(Vehicle $vehicle)
@@ -46,16 +39,36 @@ class VehicleController extends Controller
 
     public function update(Request $request, Vehicle $vehicle)
     {
-        $validated = $request->validate([
-            'plate_number' => ['required', 'string', Rule::unique('vehicles')->ignore($vehicle->id)],
-            'brand' => ['required', 'string'],
-            'model' => ['required', 'string'],
-            'capacity' => ['required', 'integer', 'min:1'],
-            'status' => ['required', 'in:Available,Maintenance,Unavailable'],
-        ]);
+        $validated = $request->validate($this->rules($vehicle));
 
         $vehicle->update($validated);
 
-        return to_route('vehicles.index');
+        return redirect()->route('vehicles.index')->with('success', 'Vehicle updated.');
+    }
+
+    public function destroy(Vehicle $vehicle)
+    {
+        $vehicle->delete();
+
+        return redirect()->route('vehicles.index')->with('success', 'Vehicle deleted.');
+    }
+
+    private function rules(?Vehicle $vehicle = null): array
+    {
+        return [
+            'plate_number' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('vehicles', 'plate_number')->ignore($vehicle?->id),
+            ],
+            'brand' => ['required', 'string', 'max:255'],
+            'model' => ['required', 'string', 'max:255'],
+            'capacity_metric_ton' => ['nullable', 'numeric', 'min:0'],
+            'capacity_cubic_meter' => ['nullable', 'numeric', 'min:0'],
+            'cost_per_km' => ['nullable', 'numeric', 'min:0'],
+            'cost_per_hour' => ['nullable', 'numeric', 'min:0'],
+            'status' => ['required', 'string', Rule::in(['Available', 'Maintenance', 'Unavailable'])],
+        ];
     }
 }

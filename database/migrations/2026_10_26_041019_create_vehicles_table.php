@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->string('plate_number')->unique();
+            $table->string('plate_number');
             $table->string('brand');
             $table->string('model');
-            $table->integer('capacity');
-            $table->string('status')->default('Available');
+            $table->integer('capacity_metric_ton');
+            $table->integer('capacity_cubic_meter');
+            $table->decimal('cost_per_km', 10, 2)->default(0);
+            $table->decimal('cost_per_hour', 10, 2)->default(0);
+            $table->string('status')->default('available');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

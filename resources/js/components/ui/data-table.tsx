@@ -72,8 +72,8 @@ export function DataTable<TData extends RowData>({
                 />
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
+                    <DropdownMenuTrigger>
+                        <Button variant="outline" className="ml-2">
                             Columns
                         </Button>
                     </DropdownMenuTrigger>
@@ -96,7 +96,7 @@ export function DataTable<TData extends RowData>({
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                <Button asChild className="ml-2">
+                <Button className="ml-auto">
                     <Link href={create()}>Add Vehicle</Link>
                 </Button>
             </div>
