@@ -19,6 +19,8 @@ export default function EditUser({ user }: { user: EditableUser }) {
     const { data, setData, put, processing, errors } = useForm({
         name: user.name,
         email: user.email,
+        password: '',
+        password_confirmation: '',
     });
     function submit(e: React.FormEvent) {
         e.preventDefault();
@@ -71,14 +73,54 @@ export default function EditUser({ user }: { user: EditableUser }) {
                                         <FieldError>{errors.email}</FieldError>
                                     )}
                                 </Field>
+
+                                <Field data-invalid={!!errors.password}>
+                                    <FieldLabel htmlFor="password">
+                                        Password
+                                    </FieldLabel>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        value={data.password}
+                                        onChange={(e) =>
+                                            setData('password', e.target.value)
+                                        }
+                                        aria-invalid={!!errors.password}
+                                    />
+                                    {errors.password && (
+                                        <FieldError>{errors.password}</FieldError>
+                                    )}
+                                </Field>
+
+                                <Field data-invalid={!!errors.password_confirmation}>
+                                    <FieldLabel htmlFor="password_confirmation">
+                                        Confirm Password
+                                    </FieldLabel>
+                                    <Input
+                                        id="password_confirmation"
+                                        type="password"
+                                        value={data.password_confirmation}
+                                        onChange={(e) =>
+                                            setData('password_confirmation', e.target.value)
+                                        }
+                                        aria-invalid={!!errors.password_confirmation}
+                                    />
+                                    {errors.password_confirmation && (
+                                        <FieldError>{errors.password_confirmation}</FieldError>
+                                    )}
+                                </Field>
                             </FieldGroup>
                         </FieldSet>
                         <Field orientation="horizontal">
                             <Button type="submit" disabled={processing}>
                                 {processing ? 'Saving...' : 'Save changes'}
                             </Button>
-                            <Button variant="outline" asChild>
-                                <Link href={show(user.id)}>Cancel</Link>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => window.history.back()}
+                            >
+                                Cancel
                             </Button>
                         </Field>
                     </FieldGroup>

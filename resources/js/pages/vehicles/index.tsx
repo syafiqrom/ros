@@ -1,10 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { columns, type Vehicle } from './columns';
 import { DataTable } from '@/components/ui/data-table';
-import { index as vehiclesRoute } from '@/routes/vehicles';
-import { Link } from '@inertiajs/react';
-import { create } from '@/routes/vehicles';
-import { Button } from '@/components/ui/button';
+import { index as vehiclesRoute, create } from '@/routes/vehicles';
 
 VehiclesPage.layout = {
     breadcrumbs: [{ title: 'Vehicles', href: vehiclesRoute() }],
@@ -15,7 +12,14 @@ export default function VehiclesPage({ vehicles }: { vehicles: Vehicle[] }) {
         <>
             <Head title="Vehicles" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <DataTable columns={columns} data={vehicles} />
+                <DataTable
+                    columns={columns}
+                    data={vehicles}
+                    filterColumn="plate_number"
+                    filterPlaceholder="Search plate numbers..."
+                    createHref={create()}
+                    createLabel="Add Vehicle"
+                />
             </div>
         </>
     );

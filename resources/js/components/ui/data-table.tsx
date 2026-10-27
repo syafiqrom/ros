@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { Link } from "@inertiajs/react"
-import { create } from "@/routes/vehicles"
 import {
     useTable,
     type ColumnDef,
@@ -34,11 +33,19 @@ import { features, type DataTableFeatures } from "./data-table-features"
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
     data: TData[]
+    filterColumn?: string
+    filterPlaceholder?: string
+    createHref?: React.ComponentProps<typeof Link>["href"]
+    createLabel?: string
 }
 
 export function DataTable<TData extends RowData>({
     columns,
     data,
+    filterColumn,
+    filterPlaceholder,
+    createHref,
+    createLabel,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -60,22 +67,18 @@ export function DataTable<TData extends RowData>({
     return (
         <div>
             <div className="flex items-center py-4">
-                <Input
-                    placeholder="Filter plate numbers..."
-                    value={
-                        (table.getColumn("plate_number")?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(e) =>
-                        table.getColumn("plate_number")?.setFilterValue(e.target.value)
-                    }
-                    className="max-w-sm"
-                />
+                {filterColumn && (
+                    <Input
+                        placeholder={filterPlaceholder ? filterPlaceholder : "Search..."}
+                        value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
+                        onChange={(e) => table.getColumn(filterColumn)?.setFilterValue(e.target.value)}
+                        className="max-w-sm"
+                    />
+                )}
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Button variant="outline" className="ml-2">
-                            Columns
-                        </Button>
+                    <DropdownMenuTrigger render={<Button variant="outline" className="ml-2" />}>
+                        Columns
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         {table
@@ -96,9 +99,14 @@ export function DataTable<TData extends RowData>({
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                <Button className="ml-auto">
-                    <Link href={create()}>Add Vehicle</Link>
-                </Button>
+                {createHref && createLabel && (
+                    <Button
+                        className="ml-auto"
+                        render={<Link href={createHref} />}
+                    >
+                        {createLabel}
+                    </Button>
+                )}
             </div>
 
             <div className="overflow-hidden rounded-md border">

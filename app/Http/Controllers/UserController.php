@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return Inertia::render('users/index', [
@@ -20,25 +18,20 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return Inertia::render('users/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        $validated = $request->validate($this->rules());
+
+        User::create($validated);
+
+        return redirect()->route('users.index')->with('success', 'User added.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(User $user)
     {
         return Inertia::render('users/show', [
@@ -46,9 +39,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(User $user)
     {
         return Inertia::render('users/edit', [
@@ -56,12 +46,15 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateUserRequest $request, User $user): RedirectResponse
+    public function update(Request $request, User $user): RedirectResponse
     {
-        $user->fill($request->validated());
+        $validated = $request->validate($this->rules($user));
+
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        }
+
+        $user->fill($validated);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -69,16 +62,24 @@ class UserController extends Controller
 
         $user->save();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated.']);
-
-        return to_route('users.show', $user);
+        return redirect()->route('users.index')->with('success', 'User updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(User $user): RedirectResponse
     {
-        //
+        abort_if($user->is(auth()->user()), 403, 'You cannot delete your own account.');
+
+        $user->delete();
+
+        return redirect()->route('users.index')->with('success', 'User deleted.');
+    }
+
+    private function rules(?User $user = null): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user)],
+            'password' => [$user ? 'nullable' : 'required', 'confirmed', Password::defaults()],
+        ];
     }
 }

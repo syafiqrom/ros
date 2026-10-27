@@ -1,14 +1,13 @@
 "use client"
 
 import { createColumnHelper } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Pencil, Copy, Eye } from 'lucide-react';
+import { ArrowUpDown, Pencil, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Link } from "@inertiajs/react"
 
 import { type DataTableFeatures } from "@/components/ui/data-table-features"
 import { edit } from "@/routes/vehicles"
-import { Link } from "@inertiajs/react"
 
 export type Vehicle = {
     id: number
@@ -65,6 +64,7 @@ export const columns = columnHelper.columns([
     columnHelper.accessor("status", { header: "Status" }),
     columnHelper.display({
         id: "actions",
+        header: "Actions",
         enableHiding: false,
         cell: ({ row }) => {
             const vehicle = row.original

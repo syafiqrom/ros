@@ -40,6 +40,8 @@ class User extends Authenticatable implements PasskeyUser
     protected function casts(): array
     {
         return [
+            'name' => 'string',
+            'email' => 'string',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];

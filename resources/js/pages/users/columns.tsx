@@ -1,10 +1,15 @@
+"use client"
+
 import { createColumnHelper } from '@tanstack/react-table';
-import { type DataTableFeatures } from '@/components/data-table/data-table-features';
-import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowUpDown, Pencil, Eye, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@inertiajs/react';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+
+import { type DataTableFeatures } from '@/components/ui/data-table-features';
+import { edit, show } from '@/routes/users';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,7 +17,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { edit, show } from '@/routes/users';
+
 import { formatDate } from '@/lib/format';
 
 export type UserRow = {
@@ -27,16 +32,14 @@ const columnHelper = createColumnHelper<DataTableFeatures, UserRow>();
 
 export const columns = columnHelper.columns([
     columnHelper.display({
-        id: 'select',
+        id: "select",
         header: ({ table }) => (
             <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
+                checked={table.getIsAllPageRowsSelected()}
+                indeterminate={
+                    table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
                 }
-                onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
             />
         ),
@@ -79,28 +82,23 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.display({
         id: 'actions',
+        header: 'Actions',
         enableHiding: false,
         cell: ({ row }) => {
             const user = row.original;
-
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                            <Link href={show(user.id)}>View</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link href={edit(user.id)}>Edit</Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex gap-2">
+                    <Button variant="ghost" size="icon">
+                        <Link href={show(user.id)}>
+                            <Eye className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon">
+                        <Link href={edit(user.id)}>
+                            <Pencil className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>
             );
         },
     }),

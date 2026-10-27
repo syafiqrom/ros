@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
-import { index as usersIndex } from '@/routes/users';
-import { DataTable } from '@/components/data-table/data-table';
+import { create, index as usersIndex } from '@/routes/users';
+import { DataTable } from '@/components/ui/data-table';
 import { columns, type UserRow } from './columns';
 
 export default function UsersPage({ users }: { users: UserRow[] }) {
@@ -12,7 +12,9 @@ export default function UsersPage({ users }: { users: UserRow[] }) {
                     columns={columns}
                     data={users}
                     filterColumn="email"
-                    filterPlaceholder="Filter emails..."
+                    filterPlaceholder="Search emails..."
+                    createHref={create()}
+                    createLabel="Add User"
                 />
             </div>
         </>
