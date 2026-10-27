@@ -1,31 +1,31 @@
-"use client"
+'use client';
 
-import { createColumnHelper } from "@tanstack/react-table"
-import { ArrowUpDown, Pencil, Eye } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Link } from "@inertiajs/react"
+import { createColumnHelper } from '@tanstack/react-table';
+import { ArrowUpDown, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from '@inertiajs/react';
 
-import { type DataTableFeatures } from "@/components/ui/data-table-features"
-import { edit } from "@/routes/vehicles"
+import { type DataTableFeatures } from '@/components/ui/data-table-features';
+import { edit } from '@/routes/vehicles';
 
 export type Vehicle = {
-    id: number
-    plate_number: string
-    brand: string
-    model: string
-    capacity_metric_ton: string
-    capacity_cubic_meter: string
-    cost_per_km: string
-    cost_per_hour: string
-    status: string
-}
+    id: number;
+    plate_number: string;
+    brand: string;
+    model: string;
+    capacity_metric_ton: string;
+    capacity_cubic_meter: string;
+    cost_per_km: string;
+    cost_per_hour: string;
+    status: string;
+};
 
-const columnHelper = createColumnHelper<DataTableFeatures, Vehicle>()
+const columnHelper = createColumnHelper<DataTableFeatures, Vehicle>();
 
 export const columns = columnHelper.columns([
     columnHelper.display({
-        id: "select",
+        id: 'select',
         header: ({ table }) => (
             <Checkbox
                 checked={table.getIsAllPageRowsSelected()}
@@ -33,7 +33,9 @@ export const columns = columnHelper.columns([
                     table.getIsSomePageRowsSelected() &&
                     !table.getIsAllPageRowsSelected()
                 }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                onCheckedChange={(value) =>
+                    table.toggleAllPageRowsSelected(!!value)
+                }
                 aria-label="Select all"
             />
         ),
@@ -47,27 +49,29 @@ export const columns = columnHelper.columns([
         enableSorting: false,
         enableHiding: false,
     }),
-    columnHelper.accessor("plate_number", {
+    columnHelper.accessor('plate_number', {
         header: ({ column }) => (
             <Button
                 variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === 'asc')
+                }
             >
                 Plate Number
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     }),
-    columnHelper.accessor("brand", { header: "Brand" }),
-    columnHelper.accessor("model", { header: "Model" }),
-    columnHelper.accessor("capacity_metric_ton", { header: "Capacity" }),
-    columnHelper.accessor("status", { header: "Status" }),
+    columnHelper.accessor('brand', { header: 'Brand' }),
+    columnHelper.accessor('model', { header: 'Model' }),
+    columnHelper.accessor('capacity_metric_ton', { header: 'Capacity' }),
+    columnHelper.accessor('status', { header: 'Status' }),
     columnHelper.display({
-        id: "actions",
-        header: "Actions",
+        id: 'actions',
+        header: 'Actions',
         enableHiding: false,
         cell: ({ row }) => {
-            const vehicle = row.original
+            const vehicle = row.original;
             return (
                 <div>
                     <Button variant="ghost" size="icon">
@@ -76,7 +80,7 @@ export const columns = columnHelper.columns([
                         </Link>
                     </Button>
                 </div>
-            )
+            );
         },
     }),
-])
+]);

@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { index as usersIndex, show, update } from '@/routes/users';
+import { index as usersIndex, update } from '@/routes/users';
 import {
     Field,
     FieldDescription,
@@ -88,11 +88,17 @@ export default function EditUser({ user }: { user: EditableUser }) {
                                         aria-invalid={!!errors.password}
                                     />
                                     {errors.password && (
-                                        <FieldError>{errors.password}</FieldError>
+                                        <FieldError>
+                                            {errors.password}
+                                        </FieldError>
                                     )}
                                 </Field>
 
-                                <Field data-invalid={!!errors.password_confirmation}>
+                                <Field
+                                    data-invalid={
+                                        !!errors.password_confirmation
+                                    }
+                                >
                                     <FieldLabel htmlFor="password_confirmation">
                                         Confirm Password
                                     </FieldLabel>
@@ -101,12 +107,19 @@ export default function EditUser({ user }: { user: EditableUser }) {
                                         type="password"
                                         value={data.password_confirmation}
                                         onChange={(e) =>
-                                            setData('password_confirmation', e.target.value)
+                                            setData(
+                                                'password_confirmation',
+                                                e.target.value,
+                                            )
                                         }
-                                        aria-invalid={!!errors.password_confirmation}
+                                        aria-invalid={
+                                            !!errors.password_confirmation
+                                        }
                                     />
                                     {errors.password_confirmation && (
-                                        <FieldError>{errors.password_confirmation}</FieldError>
+                                        <FieldError>
+                                            {errors.password_confirmation}
+                                        </FieldError>
                                     )}
                                 </Field>
                             </FieldGroup>

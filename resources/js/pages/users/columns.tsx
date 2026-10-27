@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
 import { createColumnHelper } from '@tanstack/react-table';
-import { ArrowUpDown, Pencil, Eye, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, Pencil, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
@@ -9,14 +9,6 @@ import { Link } from '@inertiajs/react';
 
 import { type DataTableFeatures } from '@/components/ui/data-table-features';
 import { edit, show } from '@/routes/users';
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 import { formatDate } from '@/lib/format';
 
@@ -32,14 +24,17 @@ const columnHelper = createColumnHelper<DataTableFeatures, UserRow>();
 
 export const columns = columnHelper.columns([
     columnHelper.display({
-        id: "select",
+        id: 'select',
         header: ({ table }) => (
             <Checkbox
                 checked={table.getIsAllPageRowsSelected()}
                 indeterminate={
-                    table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+                    table.getIsSomePageRowsSelected() &&
+                    !table.getIsAllPageRowsSelected()
                 }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                onCheckedChange={(value) =>
+                    table.toggleAllPageRowsSelected(!!value)
+                }
                 aria-label="Select all"
             />
         ),

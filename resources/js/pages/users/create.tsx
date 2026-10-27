@@ -87,11 +87,17 @@ export default function CreateUser() {
                                         required
                                     />
                                     {errors.password && (
-                                        <FieldError>{errors.password}</FieldError>
+                                        <FieldError>
+                                            {errors.password}
+                                        </FieldError>
                                     )}
                                 </Field>
 
-                                <Field data-invalid={!!errors.password_confirmation}>
+                                <Field
+                                    data-invalid={
+                                        !!errors.password_confirmation
+                                    }
+                                >
                                     <FieldLabel htmlFor="password_confirmation">
                                         Confirm Password
                                     </FieldLabel>
@@ -100,13 +106,20 @@ export default function CreateUser() {
                                         type="password"
                                         value={data.password_confirmation}
                                         onChange={(e) =>
-                                            setData('password_confirmation', e.target.value)
+                                            setData(
+                                                'password_confirmation',
+                                                e.target.value,
+                                            )
                                         }
-                                        aria-invalid={!!errors.password_confirmation}
+                                        aria-invalid={
+                                            !!errors.password_confirmation
+                                        }
                                         required
                                     />
                                     {errors.password_confirmation && (
-                                        <FieldError>{errors.password_confirmation}</FieldError>
+                                        <FieldError>
+                                            {errors.password_confirmation}
+                                        </FieldError>
                                     )}
                                 </Field>
                             </FieldGroup>

@@ -63,44 +63,71 @@ export default function CreateVehicle() {
                                         id="plate_number"
                                         placeholder="ABC-123"
                                         value={data.plate_number}
-                                        onChange={(e) => setData('plate_number', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'plate_number',
+                                                e.target.value,
+                                            )
+                                        }
                                         aria-invalid={!!errors.plate_number}
                                         required
                                     />
                                     {errors.plate_number && (
-                                        <FieldError>{errors.plate_number}</FieldError>
+                                        <FieldError>
+                                            {errors.plate_number}
+                                        </FieldError>
                                     )}
                                 </Field>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <Field data-invalid={!!errors.brand}>
-                                        <FieldLabel htmlFor="brand">Brand</FieldLabel>
+                                        <FieldLabel htmlFor="brand">
+                                            Brand
+                                        </FieldLabel>
                                         <Input
                                             id="brand"
                                             placeholder="Toyota"
                                             value={data.brand}
-                                            onChange={(e) => setData('brand', e.target.value)}
+                                            onChange={(e) =>
+                                                setData('brand', e.target.value)
+                                            }
                                             aria-invalid={!!errors.brand}
                                             required
                                         />
-                                        {errors.brand && <FieldError>{errors.brand}</FieldError>}
+                                        {errors.brand && (
+                                            <FieldError>
+                                                {errors.brand}
+                                            </FieldError>
+                                        )}
                                     </Field>
                                     <Field data-invalid={!!errors.model}>
-                                        <FieldLabel htmlFor="model">Model</FieldLabel>
+                                        <FieldLabel htmlFor="model">
+                                            Model
+                                        </FieldLabel>
                                         <Input
                                             id="model"
                                             placeholder="Hilux"
                                             value={data.model}
-                                            onChange={(e) => setData('model', e.target.value)}
+                                            onChange={(e) =>
+                                                setData('model', e.target.value)
+                                            }
                                             aria-invalid={!!errors.model}
                                             required
                                         />
-                                        {errors.model && <FieldError>{errors.model}</FieldError>}
+                                        {errors.model && (
+                                            <FieldError>
+                                                {errors.model}
+                                            </FieldError>
+                                        )}
                                     </Field>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Field data-invalid={!!errors.capacity_metric_ton}>
+                                    <Field
+                                        data-invalid={
+                                            !!errors.capacity_metric_ton
+                                        }
+                                    >
                                         <FieldLabel htmlFor="capacity_metric_ton">
                                             Capacity (ton)
                                         </FieldLabel>
@@ -112,15 +139,26 @@ export default function CreateVehicle() {
                                             placeholder="3.5"
                                             value={data.capacity_metric_ton}
                                             onChange={(e) =>
-                                                setData('capacity_metric_ton', e.target.value)
+                                                setData(
+                                                    'capacity_metric_ton',
+                                                    e.target.value,
+                                                )
                                             }
-                                            aria-invalid={!!errors.capacity_metric_ton}
+                                            aria-invalid={
+                                                !!errors.capacity_metric_ton
+                                            }
                                         />
                                         {errors.capacity_metric_ton && (
-                                            <FieldError>{errors.capacity_metric_ton}</FieldError>
+                                            <FieldError>
+                                                {errors.capacity_metric_ton}
+                                            </FieldError>
                                         )}
                                     </Field>
-                                    <Field data-invalid={!!errors.capacity_cubic_meter}>
+                                    <Field
+                                        data-invalid={
+                                            !!errors.capacity_cubic_meter
+                                        }
+                                    >
                                         <FieldLabel htmlFor="capacity_cubic_meter">
                                             Capacity (m³)
                                         </FieldLabel>
@@ -132,19 +170,28 @@ export default function CreateVehicle() {
                                             placeholder="12"
                                             value={data.capacity_cubic_meter}
                                             onChange={(e) =>
-                                                setData('capacity_cubic_meter', e.target.value)
+                                                setData(
+                                                    'capacity_cubic_meter',
+                                                    e.target.value,
+                                                )
                                             }
-                                            aria-invalid={!!errors.capacity_cubic_meter}
+                                            aria-invalid={
+                                                !!errors.capacity_cubic_meter
+                                            }
                                         />
                                         {errors.capacity_cubic_meter && (
-                                            <FieldError>{errors.capacity_cubic_meter}</FieldError>
+                                            <FieldError>
+                                                {errors.capacity_cubic_meter}
+                                            </FieldError>
                                         )}
                                     </Field>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <Field data-invalid={!!errors.cost_per_km}>
-                                        <FieldLabel htmlFor="cost_per_km">Cost per km</FieldLabel>
+                                        <FieldLabel htmlFor="cost_per_km">
+                                            Cost per km
+                                        </FieldLabel>
                                         <Input
                                             id="cost_per_km"
                                             type="number"
@@ -152,14 +199,23 @@ export default function CreateVehicle() {
                                             step="0.01"
                                             placeholder="1.50"
                                             value={data.cost_per_km}
-                                            onChange={(e) => setData('cost_per_km', e.target.value)}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'cost_per_km',
+                                                    e.target.value,
+                                                )
+                                            }
                                             aria-invalid={!!errors.cost_per_km}
                                         />
                                         {errors.cost_per_km && (
-                                            <FieldError>{errors.cost_per_km}</FieldError>
+                                            <FieldError>
+                                                {errors.cost_per_km}
+                                            </FieldError>
                                         )}
                                     </Field>
-                                    <Field data-invalid={!!errors.cost_per_hour}>
+                                    <Field
+                                        data-invalid={!!errors.cost_per_hour}
+                                    >
                                         <FieldLabel htmlFor="cost_per_hour">
                                             Cost per hour
                                         </FieldLabel>
@@ -171,21 +227,32 @@ export default function CreateVehicle() {
                                             placeholder="45.00"
                                             value={data.cost_per_hour}
                                             onChange={(e) =>
-                                                setData('cost_per_hour', e.target.value)
+                                                setData(
+                                                    'cost_per_hour',
+                                                    e.target.value,
+                                                )
                                             }
-                                            aria-invalid={!!errors.cost_per_hour}
+                                            aria-invalid={
+                                                !!errors.cost_per_hour
+                                            }
                                         />
                                         {errors.cost_per_hour && (
-                                            <FieldError>{errors.cost_per_hour}</FieldError>
+                                            <FieldError>
+                                                {errors.cost_per_hour}
+                                            </FieldError>
                                         )}
                                     </Field>
                                 </div>
 
                                 <Field data-invalid={!!errors.status}>
-                                    <FieldLabel htmlFor="status">Status</FieldLabel>
+                                    <FieldLabel htmlFor="status">
+                                        Status
+                                    </FieldLabel>
                                     <Select
                                         value={data.status}
-                                        onValueChange={(value) => setData('status', value as any)}
+                                        onValueChange={(value) =>
+                                            setData('status', value as any)
+                                        }
                                     >
                                         <SelectTrigger id="status">
                                             <SelectValue />
@@ -193,14 +260,19 @@ export default function CreateVehicle() {
                                         <SelectContent>
                                             <SelectGroup>
                                                 {statuses.map((item) => (
-                                                    <SelectItem key={item.value} value={item.value}>
+                                                    <SelectItem
+                                                        key={item.value}
+                                                        value={item.value}
+                                                    >
                                                         {item.label}
                                                     </SelectItem>
                                                 ))}
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
-                                    {errors.status && <FieldError>{errors.status}</FieldError>}
+                                    {errors.status && (
+                                        <FieldError>{errors.status}</FieldError>
+                                    )}
                                 </Field>
                             </FieldGroup>
                         </FieldSet>
