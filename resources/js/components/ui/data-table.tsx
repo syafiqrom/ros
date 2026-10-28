@@ -37,6 +37,7 @@ interface DataTableProps<TData extends RowData> {
     filterPlaceholder?: string
     createHref?: React.ComponentProps<typeof Link>["href"]
     createLabel?: string
+    toolbar?: React.ReactNode
 }
 
 export function DataTable<TData extends RowData>({
@@ -46,6 +47,7 @@ export function DataTable<TData extends RowData>({
     filterPlaceholder,
     createHref,
     createLabel,
+    toolbar,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -99,14 +101,17 @@ export function DataTable<TData extends RowData>({
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {createHref && createLabel && (
-                    <Button
-                        className="ml-auto"
-                        render={<Link href={createHref} />}
-                    >
-                        {createLabel}
-                    </Button>
-                )}
+                <div className="ml-auto flex items-center gap-2">
+                    {toolbar}
+                    {createHref && createLabel && (
+                        <Button
+                            className="ml-auto"
+                            render={<Link href={createHref} />}
+                        >
+                            {createLabel}
+                        </Button>
+                    )}
+                </div>
             </div>
 
             <div className="overflow-hidden rounded-md border">
