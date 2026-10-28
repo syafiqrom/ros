@@ -16,6 +16,8 @@ export type UserRow = {
     id: number;
     name: string;
     email: string;
+    role: 'planner' | 'manager';
+    status: 'active' | 'deactivated';
     email_verified_at: string | null; //null = not verified
     created_at: string; //dates arrive at strings in JSON
 };
@@ -62,6 +64,28 @@ export const columns = columnHelper.columns([
         ),
     }),
     columnHelper.accessor('email', { header: 'Email' }),
+    columnHelper.accessor('role', {
+        header: 'Role',
+        cell: ({ getValue }) => (
+            <Badge
+                variant={getValue() === 'manager' ? 'default' : 'secondary'}
+                className="capitalize"
+            >
+                {getValue()}
+            </Badge>
+        ),
+    }),
+    columnHelper.accessor('status', {
+        header: 'Status',
+        cell: ({ getValue }) => (
+            <Badge
+                variant={getValue() === 'active' ? 'outline' : 'destructive'}
+                className="capitalize"
+            >
+                {getValue()}
+            </Badge>
+        ),
+    }),
     columnHelper.accessor('email_verified_at', {
         header: 'Verified',
         cell: ({ getValue }) =>

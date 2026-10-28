@@ -11,6 +11,16 @@ import {
     FieldLegend,
     FieldSet,
 } from '@/components/ui/field';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { roleOptions } from './options';
+import { type UserRow } from './columns';
 
 export default function CreateUser() {
     const { data, setData, post, processing, errors } = useForm({
@@ -18,6 +28,7 @@ export default function CreateUser() {
         email: '',
         password: '',
         password_confirmation: '',
+        role: 'planner' as UserRow['role'],
     });
 
     function submit(e: React.FormEvent) {
@@ -69,6 +80,39 @@ export default function CreateUser() {
                                     />
                                     {errors.email && (
                                         <FieldError>{errors.email}</FieldError>
+                                    )}
+                                </Field>
+
+                                <Field data-invalid={!!errors.role}>
+                                    <FieldLabel htmlFor="role">Role</FieldLabel>
+                                    <Select
+                                        items={roleOptions}
+                                        value={data.role}
+                                        onValueChange={(value) =>
+                                            setData(
+                                                'role',
+                                                value as UserRow['role'],
+                                            )
+                                        }
+                                    >
+                                        <SelectTrigger id="role">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {roleOptions.map((option) => (
+                                                    <SelectItem
+                                                        key={option.value}
+                                                        value={option.value}
+                                                    >
+                                                        {option.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.role && (
+                                        <FieldError>{errors.role}</FieldError>
                                     )}
                                 </Field>
 

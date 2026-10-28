@@ -11,9 +11,18 @@ import {
     FieldLegend,
     FieldSet,
 } from '@/components/ui/field';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { roleOptions, statusOptions } from './options';
 import { type UserRow } from './columns';
 
-type EditableUser = Pick<UserRow, 'id' | 'name' | 'email'>;
+type EditableUser = Pick<UserRow, 'id' | 'name' | 'email' | 'role' | 'status'>;
 
 export default function EditUser({ user }: { user: EditableUser }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -21,6 +30,8 @@ export default function EditUser({ user }: { user: EditableUser }) {
         email: user.email,
         password: '',
         password_confirmation: '',
+        role: user.role,
+        status: user.status,
     });
     function submit(e: React.FormEvent) {
         e.preventDefault();
@@ -36,7 +47,7 @@ export default function EditUser({ user }: { user: EditableUser }) {
                         <FieldSet>
                             <FieldLegend>Edit User</FieldLegend>
                             <FieldDescription>
-                                Update this user's name and email
+                                Update this user's details, role and status
                             </FieldDescription>
                             <FieldGroup>
                                 <Field data-invalid={!!errors.name}>
@@ -71,6 +82,74 @@ export default function EditUser({ user }: { user: EditableUser }) {
                                     />
                                     {errors.email && (
                                         <FieldError>{errors.email}</FieldError>
+                                    )}
+                                </Field>
+
+                                <Field data-invalid={!!errors.role}>
+                                    <FieldLabel htmlFor="role">Role</FieldLabel>
+                                    <Select
+                                        items={roleOptions}
+                                        value={data.role}
+                                        onValueChange={(value) =>
+                                            setData(
+                                                'role',
+                                                value as UserRow['role'],
+                                            )
+                                        }
+                                    >
+                                        <SelectTrigger id="role">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {roleOptions.map((option) => (
+                                                    <SelectItem
+                                                        key={option.value}
+                                                        value={option.value}
+                                                    >
+                                                        {option.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.role && (
+                                        <FieldError>{errors.role}</FieldError>
+                                    )}
+                                </Field>
+
+                                <Field data-invalid={!!errors.status}>
+                                    <FieldLabel htmlFor="status">
+                                        Status
+                                    </FieldLabel>
+                                    <Select
+                                        items={statusOptions}
+                                        value={data.status}
+                                        onValueChange={(value) =>
+                                            setData(
+                                                'status',
+                                                value as UserRow['status'],
+                                            )
+                                        }
+                                    >
+                                        <SelectTrigger id="status">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {statusOptions.map((option) => (
+                                                    <SelectItem
+                                                        key={option.value}
+                                                        value={option.value}
+                                                    >
+                                                        {option.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.status && (
+                                        <FieldError>{errors.status}</FieldError>
                                     )}
                                 </Field>
 
