@@ -7,18 +7,40 @@ import {
     type ColumnDef,
     type ColumnFiltersState,
     type ColumnVisibilityState,
+    type PaginationState,
     type RowData,
     type SortingState,
 } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination"
+import {
+    Field,
+    FieldLabel,
+} from "@/components/ui/field"
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectGroup,
+    SelectItem
+} from "@/components/ui/select"
 import {
     Table,
     TableBody,
@@ -30,6 +52,18 @@ import {
 
 import { features, type DataTableFeatures } from "./data-table-features"
 
+function getPageItems(current: number, total: number) {
+    const pages: (number | "ellipsis")[] = []
+    for (let i = 0; i < total; i++) {
+        if (i === 0 || i === total - 1 || Math.abs(i - current) <= 1) {
+            pages.push(i)
+        } else if (pages[pages.length - 1] !== "ellipsis") {
+            pages.push("ellipsis")
+        }
+    }
+    return pages
+}
+
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
     data: TData[]
@@ -38,6 +72,37 @@ interface DataTableProps<TData extends RowData> {
     createHref?: React.ComponentProps<typeof Link>["href"]
     createLabel?: string
     toolbar?: React.ReactNode
+}
+
+interface RowsPerPageProps {
+    value: number
+    onChange: (pageSize: number) => void
+    options?: number[]
+}
+
+function RowsPerPage({ value, onChange, options = [10, 25, 50, 100] }: RowsPerPageProps) {
+    return (
+        <Field orientation="horizontal" className="w-fit">
+            <FieldLabel htmlFor="select-rows-per-page">Rows per page</FieldLabel>
+            <Select
+                value={String(value)}
+                onValueChange={(v) => v && onChange(Number(v))}
+            >
+                <SelectTrigger className="w-20" id="select-rows-per-page">
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent align="start">
+                    <SelectGroup>
+                        {options.map((size) => (
+                            <SelectItem key={size} value={String(size)}>
+                                {size}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </Field>
+    )
 }
 
 export function DataTable<TData extends RowData>({
@@ -54,6 +119,10 @@ export function DataTable<TData extends RowData>({
     const [columnVisibility, setColumnVisibility] =
         React.useState<ColumnVisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [pagination, setPagination] = React.useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 10,
+    })
 
     const table = useTable({
         features,
@@ -63,8 +132,12 @@ export function DataTable<TData extends RowData>({
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        state: { sorting, columnFilters, columnVisibility, rowSelection },
+        onPaginationChange: setPagination,
+        state: { sorting, columnFilters, columnVisibility, rowSelection, pagination },
     })
+
+    const pageCount = table.getPageCount()
+    const currentPage = pagination.pageIndex
 
     return (
         <div>
@@ -157,28 +230,67 @@ export function DataTable<TData extends RowData>({
                 </Table>
             </div>
 
+            {/* Pagination */}
             <div className="flex items-center justify-between py-4">
                 <div className="text-sm text-muted-foreground">
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
                     {table.getFilteredRowModel().rows.length} row(s) selected.
                 </div>
-                <div className="flex items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        Next
-                    </Button>
+
+                <div className="flex">
+                    <RowsPerPage
+                        value={pagination.pageSize}
+                        onChange={(size) => table.setPageSize(size)}
+                    />
+
+                    {pageCount > 1 && (
+                        <Pagination className="mx-0 w-auto">
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        href="#"
+                                        aria-disabled={!table.getCanPreviousPage()}
+                                        className={!table.getCanPreviousPage() ? "pointer-events-none opacity-50" : ""}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            table.previousPage()
+                                        }}
+                                    />
+                                </PaginationItem>
+
+                                {getPageItems(currentPage, pageCount).map((item, i) => (
+                                    <PaginationItem key={`${item}-${i}`}>
+                                        {item === "ellipsis" ? (
+                                            <PaginationEllipsis />
+                                        ) : (
+                                            <PaginationLink
+                                                href="#"
+                                                isActive={item === currentPage}
+                                                onClick={(e) => {
+                                                    e.preventDefault()
+                                                    table.setPageIndex(item)
+                                                }}
+                                            >
+                                                {item + 1}
+                                            </PaginationLink>
+                                        )}
+                                    </PaginationItem>
+                                ))}
+
+                                <PaginationItem>
+                                    <PaginationNext
+                                        href="#"
+                                        aria-disabled={!table.getCanNextPage()}
+                                        className={!table.getCanNextPage() ? "pointer-events-none opacity-50" : ""}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            table.nextPage()
+                                        }}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    )}
                 </div>
             </div>
         </div>
