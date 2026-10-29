@@ -4,6 +4,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { index as orderRoute, store } from '@/routes/orders';
 import { ImportPopover } from '@/components/import-popover';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DatePicker } from '@/components/date-picker';
 
 OrderPage.layout = {
     breadcrumbs: [{ title: 'Order', href: orderRoute() }],
@@ -14,13 +15,17 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
         <>
             <Head title="Order" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <Tabs defaultValue="all" className="w-full">
-                    <TabsList>
-                        <TabsTrigger value="all">All</TabsTrigger>
-                        <TabsTrigger value="new">New</TabsTrigger>
-                        <TabsTrigger value="pooled">Pooled</TabsTrigger>
-                    </TabsList>
-                </Tabs>
+                <div className="flex justify-between items-center">
+                    <Tabs defaultValue="all" className="w-full">
+                        <TabsList>
+                            <TabsTrigger value="all">All</TabsTrigger>
+                            <TabsTrigger value="new">New</TabsTrigger>
+                            <TabsTrigger value="pooled">Pooled</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+
+                    <DatePicker />
+                </div>
 
                 <DataTable
                     columns={columns}
