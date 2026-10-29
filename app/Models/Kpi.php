@@ -22,8 +22,8 @@ class Kpi extends Model
     ];
 
     protected $casts = [
-        'job_date' => 'date',
-        'iod_date' => 'datetime',
-        'est_delivery_date' => 'date',
+        'job_date' => 'date:Y-m-d',
+        'iod_date' => 'datetime:Y-m-d H:i:s',
+        'est_delivery_date' => 'date:Y-m-d',
     ];
 }

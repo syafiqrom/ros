@@ -4,7 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { ArrowUpDown, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Link } from '@inertiajs/react';
+import { formatDate, formatDateTime } from '@/lib/format';
 
 import { type DataTableFeatures } from '@/components/ui/data-table-features';
 
@@ -64,12 +64,21 @@ export const columns = columnHelper.columns([
         ),
     }),
     columnHelper.accessor('job_no', { header: 'Job No' }),
-    columnHelper.accessor('job_date', { header: 'Job Date' }),
+    columnHelper.accessor('job_date', {
+        header: 'Job Date',
+        cell: (info) => formatDate(info.getValue()),
+    }),
     columnHelper.accessor('daikin_do', { header: 'Daikin DO' }),
     columnHelper.accessor('delivery_point_name', { header: 'Delivery Point Name' }),
     columnHelper.accessor('truck_no', { header: 'Truck No' }),
-    columnHelper.accessor('iod_date', { header: 'IOD Date' }),
-    columnHelper.accessor('est_delivery_date', { header: 'Est Delivery Date' }),
+    columnHelper.accessor('iod_date', {
+        header: 'IOD Date Time',
+        cell: (info) => formatDateTime(info.getValue()),
+    }),
+    columnHelper.accessor('est_delivery_date', {
+        header: 'Est Delivery Date',
+        cell: (info) => formatDate(info.getValue()),
+    }),
     columnHelper.accessor('est_delivery_time', { header: 'Est Delivery Time' }),
     columnHelper.accessor('kpi_pass', { header: 'KPI Status' }),
 ]);
