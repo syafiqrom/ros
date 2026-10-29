@@ -29,11 +29,13 @@ export default function KPIPage({ kpi_reports }: { kpi_reports: KPI[] }) {
         <>
             <Head title="KPI" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <Tabs defaultValue="pass" className="w-full">
                         <TabsList>
                             <TabsTrigger value="pass">Pass</TabsTrigger>
-                            <TabsTrigger value="on_delivery">On Delivery</TabsTrigger>
+                            <TabsTrigger value="on_delivery">
+                                On Delivery
+                            </TabsTrigger>
                             <TabsTrigger value="no_iod">No IOD</TabsTrigger>
                         </TabsList>
                     </Tabs>
