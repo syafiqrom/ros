@@ -1,7 +1,12 @@
+export type UserRole = 'planner' | 'manager';
+export type UserStatus = 'active' | 'deactivated';
+
 export type User = {
     id: number;
     name: string;
     email: string;
+    role: UserRole;
+    status: UserStatus;
     avatar?: string;
     email_verified_at: string | null;
     created_at: string;

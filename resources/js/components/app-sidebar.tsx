@@ -1,5 +1,12 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, Users, Truck, Sheet } from 'lucide-react';
+import { usePage, Link } from '@inertiajs/react';
+import {
+    BookOpen,
+    FolderGit2,
+    LayoutGrid,
+    Users,
+    Truck,
+    Sheet,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -30,6 +37,9 @@ const mainNavItems: NavItem[] = [
         href: vehicles(),
         icon: Truck,
     },
+];
+
+const managerNavItems: NavItem[] = [
     {
         title: 'Users',
         href: users(),
@@ -39,7 +49,7 @@ const mainNavItems: NavItem[] = [
         title: 'KPI',
         href: kpiReports(),
         icon: Sheet,
-    }
+    },
 ];
 
 const footerNavItems: NavItem[] = [
@@ -56,6 +66,13 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props;
+    const isManager = auth.user.role === 'manager';
+
+    const navItems = isManager
+        ? [...mainNavItems, ...managerNavItems]
+        : mainNavItems;
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -72,7 +89,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>
