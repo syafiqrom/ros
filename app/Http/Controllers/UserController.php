@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index()
     {
         return Inertia::render('users/index', [
-            'users' => User::select('id', 'name', 'email', 'email_verified_at', 'created_at')->get(),
+            'users' => User::select('id', 'name', 'email', 'role', 'status', 'email_verified_at', 'created_at')->get(),
         ]);
     }
 
@@ -35,14 +35,14 @@ class UserController extends Controller
     public function show(User $user)
     {
         return Inertia::render('users/show', [
-            'user' => $user->only(['id', 'name', 'email', 'email_verified_at', 'created_at']),
+            'user' => $user->only(['id', 'name', 'email', 'role', 'status', 'email_verified_at', 'created_at']),
         ]);
     }
 
     public function edit(User $user)
     {
         return Inertia::render('users/edit', [
-            'user' => $user->only(['id', 'name', 'email']),
+            'user' => $user->only(['id', 'name', 'email', 'role', 'status']),
         ]);
     }
 
@@ -79,6 +79,8 @@ class UserController extends Controller
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user)],
+            'role' => ['required', Rule::in(['planner', 'manager'])],
+            'status' => [$user ? 'required' : 'nullable', Rule::in(['active', 'deactivated'])],
             'password' => [$user ? 'nullable' : 'required', 'confirmed', Password::defaults()],
         ];
     }

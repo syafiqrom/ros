@@ -50,6 +50,34 @@ export default function ShowUser({ user }: { user: UserRow }) {
                                 )}
                             </dd>
 
+                            <dt className="text-muted-foreground">Role</dt>
+                            <dd>
+                                <Badge
+                                    variant={
+                                        user.role === 'manager'
+                                            ? 'default'
+                                            : 'secondary'
+                                    }
+                                    className="capitalize"
+                                >
+                                    {user.role}
+                                </Badge>
+                            </dd>
+
+                            <dt className="text-muted-foreground">Status</dt>
+                            <dd>
+                                <Badge
+                                    variant={
+                                        user.status === 'active'
+                                            ? 'outline'
+                                            : 'destructive'
+                                    }
+                                    className="capitalize"
+                                >
+                                    {user.status}
+                                </Badge>
+                            </dd>
+
                             <dt className="text-muted-foreground">
                                 Verified on
                             </dt>
