@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
 import { columns, type Order } from './columns';
 import { DataTable } from '@/components/ui/data-table';
-import { index as orderRoute } from '@/routes/orders';
-import { ImportPopover } from './import-popover';
+import { index as orderRoute, store } from '@/routes/orders';
+import { ImportPopover } from '@/components/import-popover';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 OrderPage.layout = {
@@ -32,6 +32,7 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
                             title="Import Order"
                             description="Select Order files to import."
                             accept=".xlsx,.xls,.csv"
+                            route={store().url}
                         />
                     }
                 />

@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
 import { columns, type KPI } from './columns';
 import { DataTable } from '@/components/ui/data-table';
-import { index as kpiRoute } from '@/routes/kpi';
-import { ImportPopover } from './import-popover';
+import { index as kpiRoute, store } from '@/routes/kpi';
+import { ImportPopover } from '@/components/import-popover';
 
 KPIPage.layout = {
     breadcrumbs: [{ title: 'KPI', href: kpiRoute() }],
@@ -23,6 +23,7 @@ export default function KPIPage({ kpi_reports }: { kpi_reports: KPI[] }) {
                             title="Import KPI Report"
                             description="Select KPI_Report_ files to import."
                             accept=".xlsx,.xls,.csv"
+                            route={store.url()}
                         />
                     }
                 />

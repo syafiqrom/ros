@@ -11,18 +11,19 @@ import {
     PopoverDescription,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import { store } from '@/routes/orders';
 
 interface ImportPopoverProps {
     title: string;
     description: string;
     accept: string;
+    route: string;
 }
 
 export function ImportPopover({
     title,
     description,
     accept,
+    route,
 }: ImportPopoverProps) {
     const [open, setOpen] = useState(false);
 
@@ -34,7 +35,7 @@ export function ImportPopover({
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post(store().url, {
+        post(route, {
             forceFormData: true,
             onSuccess: () => {
                 reset();
