@@ -19,7 +19,11 @@ interface ImportPopoverProps {
     accept: string;
 }
 
-export function ImportPopover({ title, description, accept }: ImportPopoverProps) {
+export function ImportPopover({
+    title,
+    description,
+    accept,
+}: ImportPopoverProps) {
     const [open, setOpen] = useState(false);
 
     const { setData, post, processing, errors, reset, clearErrors } = useForm<{
@@ -57,11 +61,16 @@ export function ImportPopover({ title, description, accept }: ImportPopoverProps
                                 accept={accept}
                                 onChange={(e) => {
                                     clearErrors('file');
-                                    setData('file', e.target.files?.[0] ?? null);
+                                    setData(
+                                        'file',
+                                        e.target.files?.[0] ?? null,
+                                    );
                                 }}
                             />
                             {errors.file && (
-                                <p className="text-sm text-destructive">{errors.file}</p>
+                                <p className="text-sm text-destructive">
+                                    {errors.file}
+                                </p>
                             )}
                         </Field>
                         <Button type="submit" disabled={processing}>

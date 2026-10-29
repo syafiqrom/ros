@@ -1,7 +1,7 @@
 'use client';
 
 import { createColumnHelper } from '@tanstack/react-table';
-import { ArrowUpDown, Pencil } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDate, formatDateTime } from '@/lib/format';
@@ -69,7 +69,9 @@ export const columns = columnHelper.columns([
         cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.accessor('daikin_do', { header: 'Daikin DO' }),
-    columnHelper.accessor('delivery_point_name', { header: 'Delivery Point Name' }),
+    columnHelper.accessor('delivery_point_name', {
+        header: 'Delivery Point Name',
+    }),
     columnHelper.accessor('truck_no', { header: 'Truck No' }),
     columnHelper.accessor('iod_date', {
         header: 'IOD Date Time',

@@ -1,5 +1,13 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, Users, Truck, Sheet } from 'lucide-react';
+import {
+    BookOpen,
+    FolderGit2,
+    LayoutGrid,
+    Users,
+    Truck,
+    Sheet,
+    Package,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -17,6 +25,7 @@ import { dashboard } from '@/routes';
 import { index as vehicles } from '@/routes/vehicles';
 import { index as users } from '@/routes/users';
 import { index as kpiReports } from '@/routes/kpi';
+import { index as orders } from '@/routes/orders';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -39,7 +48,12 @@ const mainNavItems: NavItem[] = [
         title: 'KPI',
         href: kpiReports(),
         icon: Sheet,
-    }
+    },
+    {
+        title: 'Order',
+        href: orders(),
+        icon: Package,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
