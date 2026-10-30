@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Imports\KpiReportImport;
 use App\Models\Kpi;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
 
 class KpiController extends Controller
@@ -13,7 +15,7 @@ class KpiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('kpi/index', [
             'kpi_reports' => Kpi::latest()->get(),
@@ -23,7 +25,7 @@ class KpiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'file' => [

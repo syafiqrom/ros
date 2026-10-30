@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('orders/index', [
             'orders' => Order::latest()->get(),
@@ -22,12 +24,12 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         //
     }
 
-    public function planning()
+    public function planning(): Response
     {
         $orders = Order::all();
 
@@ -40,7 +42,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function reorder(Request $request)
+    public function reorder(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'columns' => 'required|array',

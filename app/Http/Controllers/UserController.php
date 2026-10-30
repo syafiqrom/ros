@@ -8,17 +8,18 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('users/index', [
             'users' => User::select('id', 'name', 'email', 'role', 'status', 'email_verified_at', 'created_at')->get(),
         ]);
     }
 
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('users/create');
     }
@@ -32,14 +33,14 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User added.');
     }
 
-    public function show(User $user)
+    public function show(User $user): Response
     {
         return Inertia::render('users/show', [
             'user' => $user->only(['id', 'name', 'email', 'role', 'status', 'email_verified_at', 'created_at']),
         ]);
     }
 
-    public function edit(User $user)
+    public function edit(User $user): Response
     {
         return Inertia::render('users/edit', [
             'user' => $user->only(['id', 'name', 'email', 'role', 'status']),
@@ -74,6 +75,9 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User deleted.');
     }
 
+    /**
+     * @return array<string, array<int, mixed>|string>
+     */
     private function rules(?User $user = null): array
     {
         return [
