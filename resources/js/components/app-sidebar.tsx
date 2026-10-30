@@ -6,6 +6,8 @@ import {
     Users,
     Truck,
     Sheet,
+    Package,
+    Waypoints,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -24,6 +26,7 @@ import { dashboard } from '@/routes';
 import { index as vehicles } from '@/routes/vehicles';
 import { index as users } from '@/routes/users';
 import { index as kpiReports } from '@/routes/kpi';
+import { index as orders, planning as orderPlanning } from '@/routes/orders';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -49,6 +52,16 @@ const managerNavItems: NavItem[] = [
         title: 'KPI',
         href: kpiReports(),
         icon: Sheet,
+    },
+    {
+        title: 'Order',
+        href: orders(),
+        icon: Package,
+    },
+    {
+        title: 'Planning',
+        href: orderPlanning(),
+        icon: Waypoints,
     },
 ];
 

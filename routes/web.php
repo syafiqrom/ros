@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\KpiController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('kpi', [KpiController::class, 'index'])->name('kpi.index');
     Route::post('kpi', [KpiController::class, 'store'])->name('kpi.store');
+
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('orders/planning', [OrderController::class, 'planning'])->name('orders.planning');
+    Route::patch('orders/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
 });
 
 require __DIR__.'/settings.php';

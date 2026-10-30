@@ -11,15 +11,20 @@ import {
     PopoverDescription,
     PopoverTrigger,
 } from '@/components/ui/popover';
-import { store } from '@/routes/kpi';
 
 interface ImportPopoverProps {
     title: string;
     description: string;
     accept: string;
+    route: string;
 }
 
-export function ImportPopover({ title, description, accept }: ImportPopoverProps) {
+export function ImportPopover({
+    title,
+    description,
+    accept,
+    route,
+}: ImportPopoverProps) {
     const [open, setOpen] = useState(false);
 
     const { setData, post, processing, errors, reset, clearErrors } = useForm<{
@@ -30,7 +35,7 @@ export function ImportPopover({ title, description, accept }: ImportPopoverProps
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post(store().url, {
+        post(route, {
             forceFormData: true,
             onSuccess: () => {
                 reset();
@@ -57,11 +62,16 @@ export function ImportPopover({ title, description, accept }: ImportPopoverProps
                                 accept={accept}
                                 onChange={(e) => {
                                     clearErrors('file');
-                                    setData('file', e.target.files?.[0] ?? null);
+                                    setData(
+                                        'file',
+                                        e.target.files?.[0] ?? null,
+                                    );
                                 }}
                             />
                             {errors.file && (
-                                <p className="text-sm text-destructive">{errors.file}</p>
+                                <p className="text-sm text-destructive">
+                                    {errors.file}
+                                </p>
                             )}
                         </Field>
                         <Button type="submit" disabled={processing}>
