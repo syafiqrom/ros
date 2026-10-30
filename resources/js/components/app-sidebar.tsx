@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { usePage, Link } from '@inertiajs/react';
 import {
     BookOpen,
     FolderGit2,
@@ -40,6 +40,9 @@ const mainNavItems: NavItem[] = [
         href: vehicles(),
         icon: Truck,
     },
+];
+
+const managerNavItems: NavItem[] = [
     {
         title: 'Users',
         href: users(),
@@ -76,6 +79,13 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props;
+    const isManager = auth.user.role === 'manager';
+
+    const navItems = isManager
+        ? [...mainNavItems, ...managerNavItems]
+        : mainNavItems;
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -92,7 +102,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>

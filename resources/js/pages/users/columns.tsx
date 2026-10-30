@@ -12,12 +12,13 @@ import { edit, show } from '@/routes/users';
 
 import { formatDate } from '@/lib/format';
 
+import type { UserRole, UserStatus } from '@/types';
 export type UserRow = {
     id: number;
     name: string;
     email: string;
-    role: 'planner' | 'manager';
-    status: 'active' | 'deactivated';
+    role: UserRole;
+    status: UserStatus;
     email_verified_at: string | null; //null = not verified
     created_at: string; //dates arrive at strings in JSON
 };
