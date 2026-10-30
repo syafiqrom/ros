@@ -12,7 +12,6 @@ export type Order = {
     daikin_do: string;
     address: string;
     delivery_point_name: string;
-    is_in_pool: boolean;
     created_at: string;
 };
 
@@ -59,6 +58,5 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor('address', { header: 'Address' }),
     columnHelper.accessor('delivery_point_name', { header: 'Delivery Point' }),
-    columnHelper.accessor('is_in_pool', { header: 'In Pool' }),
     columnHelper.accessor('created_at', { header: 'Created At' }),
 ]);

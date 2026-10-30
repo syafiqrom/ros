@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('daikin_DO')->unique();
             $table->string('address')->nullable();
             $table->string('delivery_point_name')->nullable();
-            $table->boolean('is_in_pool')->default(true);
+            $table->string('priority')->default('normal');
+            $table->string('plan_board')->default('pool');
             $table->timestamps();
         });
     }

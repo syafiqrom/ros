@@ -10,6 +10,7 @@ class Order extends Model
         'daikin_do',
         'address',
         'delivery_point_name',
-        'is_in_pool',
+        'priority',
+        'plan_board',
     ];
 }

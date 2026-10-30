@@ -20,8 +20,7 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
         if (!date) return orders;
         return orders.filter(
             (row) =>
-                row.created_at &&
-                isSameDay(parseISO(row.created_at), date),
+                row.created_at && isSameDay(parseISO(row.created_at), date),
         );
     }, [orders, date]);
 
@@ -43,7 +42,7 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
 
                 <DataTable
                     columns={columns}
-                    data={orders}
+                    data={filteredOrders}
                     filterColumn="Daikin_DO"
                     filterPlaceholder="Search Daikin DO..."
                     toolbar={

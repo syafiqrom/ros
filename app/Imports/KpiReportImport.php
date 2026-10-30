@@ -9,7 +9,6 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
-use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class KpiReportImport implements ToModel, WithBatchInserts, WithChunkReading, WithHeadingRow, WithUpserts
 {
@@ -46,6 +45,7 @@ class KpiReportImport implements ToModel, WithBatchInserts, WithChunkReading, Wi
     }
 
     // On conflict, update everything except the key and created_at
+    /** @return list<string> */
     public function upsertColumns(): array
     {
         return [
@@ -88,11 +88,13 @@ class KpiReportImport implements ToModel, WithBatchInserts, WithChunkReading, Wi
         }
 
         try {
-            if (is_numeric($value)) {
-                return Carbon::instance(ExcelDate::excelToDateTimeObject($value))->format($format);
-            }
+            $date = match (true) {
+                is_int($value), is_float($value) => Date::excelToDateTimeObject($value),
+                is_string($value) => Carbon::parse($value),
+                default => null,
+            };
 
-            return Carbon::parse($value)->format($format);
+            return $date?->format($format);
         } catch (\Throwable) {
             return null;
         }
