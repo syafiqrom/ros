@@ -13,6 +13,29 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: rosdb
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3307
+      DB_DATABASE: rosdb
+      DB_USERNAME: root
+      DB_PASSWORD: ""
+
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -25,11 +48,18 @@ jobs:
           php-version: '8.4'
           tools: composer:v2
           coverage: none
+          extensions: mbstring, pdo_mysql
 
       - name: Setup Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          sed -i '/^APP_KEY=/d' .env
+          echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env
 
       - name: Setup Application
         run: composer setup
