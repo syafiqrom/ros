@@ -17,6 +17,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
+Planning.layout = {
+    breadcrumbs: [{ title: 'Planning' }],
+};
+
 type Priority = 'normal' | 'cancel' | 'urgent';
 
 interface Order {
