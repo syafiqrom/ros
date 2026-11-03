@@ -29,7 +29,9 @@ class VehicleController extends Controller
 
         Vehicle::create($validated);
 
-        return redirect()->route('vehicles.index')->with('success', 'Vehicle added.');
+        $this->toast('success', 'Vehicle added.');
+
+        return redirect()->route('vehicles.index');
     }
 
     public function edit(Vehicle $vehicle): Response
@@ -45,14 +47,18 @@ class VehicleController extends Controller
 
         $vehicle->update($validated);
 
-        return redirect()->route('vehicles.index')->with('success', 'Vehicle updated.');
+        $this->toast('success', 'Vehicle updated.');
+
+        return redirect()->route('vehicles.index');
     }
 
     public function destroy(Vehicle $vehicle): RedirectResponse
     {
         $vehicle->delete();
 
-        return redirect()->route('vehicles.index')->with('success', 'Vehicle deleted.');
+        $this->toast('success', 'Vehicle deleted.');
+
+        return redirect()->route('vehicles.index');
     }
 
     /**

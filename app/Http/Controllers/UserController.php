@@ -30,7 +30,9 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('users.index')->with('success', 'User added.');
+        $this->toast('success', 'User added.');
+
+        return redirect()->route('users.index');
     }
 
     public function show(User $user): Response
@@ -63,7 +65,9 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'User updated.');
+        $this->toast('success', 'User updated.');
+
+        return redirect()->route('users.index');
     }
 
     public function destroy(User $user): RedirectResponse
@@ -72,7 +76,9 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted.');
+        $this->toast('success', 'User deleted.');
+
+        return redirect()->route('users.index');
     }
 
     /**
