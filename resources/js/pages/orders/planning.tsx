@@ -1,7 +1,8 @@
 import { ComponentProps, useRef, useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { GripVerticalIcon } from 'lucide-react';
+import { ClockIcon, GripVerticalIcon } from 'lucide-react';
 
+import { Badge } from '@/components/reui/badge';
 import {
     Kanban,
     KanbanBoard,
@@ -51,15 +52,32 @@ interface OrderCardProps extends Omit<
     'value' | 'children'
 > {
     order: Order;
+    index?: number;
     asHandle?: boolean;
     isOverlay?: boolean;
 }
 
-function OrderCard({ order, asHandle, isOverlay, ...props }: OrderCardProps) {
+function OrderCard({
+    order,
+    index,
+    asHandle,
+    isOverlay,
+    ...props
+}: OrderCardProps) {
     const cardContent = (
-        <Card>
+        <Card
+            className={cn(
+                'transition-shadow hover:shadow-md',
+                isOverlay && 'ring-2 ring-primary/30',
+            )}
+        >
             <CardContent className="space-y-2.5">
                 <div className="flex items-center gap-2">
+                    {index !== undefined && (
+                        <Badge variant="outline" className="tabular-nums">
+                            {index + 1}
+                        </Badge>
+                    )}
                     <span
                         className={cn(
                             'size-2 shrink-0 rounded-full',
@@ -70,6 +88,11 @@ function OrderCard({ order, asHandle, isOverlay, ...props }: OrderCardProps) {
                     <span className="line-clamp-1 text-sm font-medium">
                         {order.delivery_point_name || 'No delivery point'}
                     </span>
+                    {order.priority !== 'normal' && (
+                        <Badge variant="outline" className="ml-auto capitalize">
+                            {order.priority}
+                        </Badge>
+                    )}
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                     {order.daikin_do && (
@@ -87,8 +110,9 @@ function OrderCard({ order, asHandle, isOverlay, ...props }: OrderCardProps) {
                     {order.created_at && (
                         <time
                             dateTime={order.created_at}
-                            className="text-[10px] whitespace-nowrap tabular-nums"
+                            className="flex items-center gap-1 text-[10px] whitespace-nowrap tabular-nums"
                         >
+                            <ClockIcon className="size-3" />
                             {new Date(order.created_at).toLocaleString(
                                 'en-MY',
                                 {
@@ -127,9 +151,14 @@ function OrderColumn({ value, orders, isOverlay, ...props }: OrderColumnProps) {
         <KanbanColumn value={value} {...props}>
             <Card className="mb-2.5">
                 <CardHeader className="flex items-center justify-between">
-                    <span className="text-sm font-semibold">
-                        {COLUMN_TITLES[value] ?? value}
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold">
+                            {COLUMN_TITLES[value] ?? value}
+                        </span>
+                        <Badge variant="secondary" className="tabular-nums">
+                            {orders.length}
+                        </Badge>
+                    </div>
                     <KanbanColumnHandle
                         render={(handleProps) => (
                             <Button
@@ -143,20 +172,26 @@ function OrderColumn({ value, orders, isOverlay, ...props }: OrderColumnProps) {
                         )}
                     />
                 </CardHeader>
-                <CardContent>
+                <CardContent className="relative">
                     <KanbanColumnContent
                         value={value}
-                        className="flex flex-col gap-2.5"
+                        className="flex min-h-24 flex-col gap-2.5"
                     >
-                        {orders.map((order) => (
+                        {orders.map((order, index) => (
                             <OrderCard
                                 key={order.id}
                                 order={order}
+                                index={index}
                                 asHandle={!isOverlay}
                                 isOverlay={isOverlay}
                             />
                         ))}
                     </KanbanColumnContent>
+                    {orders.length === 0 && (
+                        <div className="pointer-events-none absolute inset-6 flex items-center justify-center rounded-lg border border-dashed text-xs text-muted-foreground">
+                            No orders
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </KanbanColumn>
@@ -241,12 +276,20 @@ export default function Planning({
                                 );
                             }
 
-                            const order = Object.values(columns)
-                                .flat()
-                                .find((o) => String(o.id) === id);
+                            const column = Object.values(columns).find((list) =>
+                                list.some((o) => String(o.id) === id),
+                            );
+                            const index = column?.findIndex(
+                                (o) => String(o.id) === id,
+                            );
+                            const order = column?.[index ?? -1];
 
                             return order ? (
-                                <OrderCard order={order} isOverlay />
+                                <OrderCard
+                                    order={order}
+                                    index={index}
+                                    isOverlay
+                                />
                             ) : null;
                         }}
                     </KanbanOverlay>
