@@ -1,5 +1,5 @@
 export type UserRole = 'planner' | 'manager';
-export type UserStatus = 'active' | 'deactivated';
+export type UserStatus = 'active' | 'inactive';
 
 export type User = {
     id: number;

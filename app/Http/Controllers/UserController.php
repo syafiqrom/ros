@@ -84,7 +84,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user)],
             'role' => ['required', Rule::in(['planner', 'manager'])],
-            'status' => [$user ? 'required' : 'nullable', Rule::in(['active', 'deactivated'])],
+            'status' => [$user ? 'required' : 'nullable', Rule::in(['active', 'inactive'])],
             'password' => [$user ? 'nullable' : 'required', 'confirmed', Password::defaults()],
         ];
     }

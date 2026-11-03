@@ -5,5 +5,5 @@ export const roleOptions = [
 
 export const statusOptions = [
     { label: 'Active', value: 'active' },
-    { label: 'Deactivated', value: 'deactivated' },
+    { label: 'Inactive', value: 'inactive' },
 ] as const;
