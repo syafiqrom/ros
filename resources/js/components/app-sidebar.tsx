@@ -9,6 +9,7 @@ import {
     Package,
     Waypoints,
     Map,
+    IdCard,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -26,6 +27,7 @@ import {
 import { dashboard } from '@/routes';
 import { index as vehicles } from '@/routes/vehicles';
 import { index as users } from '@/routes/users';
+import { index as drivers } from '@/routes/drivers';
 import { index as kpiReports } from '@/routes/kpi';
 import { index as orders, planning as orderPlanning } from '@/routes/orders';
 import type { NavItem } from '@/types';
@@ -40,6 +42,11 @@ const mainNavItems: NavItem[] = [
         title: 'Vehicles',
         href: vehicles(),
         icon: Truck,
+    },
+    {
+        title: 'Drivers',
+        href: drivers(),
+        icon: IdCard,
     },
 ];
 
