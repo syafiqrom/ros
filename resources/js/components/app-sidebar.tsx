@@ -8,6 +8,7 @@ import {
     Sheet,
     Package,
     Waypoints,
+    Map,
     IdCard,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -69,6 +70,11 @@ const managerNavItems: NavItem[] = [
         title: 'Planning',
         href: orderPlanning(),
         icon: Waypoints,
+    },
+    {
+        title: 'Map',
+        href: '/orders/map',
+        icon: Map,
     },
 ];
 

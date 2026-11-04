@@ -22,6 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('orders/planning', [OrderController::class, 'planning'])->name('orders.planning');
     Route::patch('orders/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
+    Route::get('orders/map', [OrderController::class, 'map'])->name('orders.map');
 });
 
 require __DIR__.'/settings.php';

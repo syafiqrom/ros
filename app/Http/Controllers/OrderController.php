@@ -65,4 +65,9 @@ class OrderController extends Controller
 
         return back();
     }
+
+    public function map(): Response
+    {
+        return Inertia::render('orders/map-view');
+    }
 }
