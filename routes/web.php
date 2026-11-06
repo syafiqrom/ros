@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\DriverController;
 use App\Http\Controllers\KpiController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
@@ -13,7 +12,6 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::resource('users', UserController::class);
     Route::resource('vehicles', VehicleController::class);
-    Route::resource('drivers', DriverController::class)->except(['destroy']);
 
     Route::get('kpi', [KpiController::class, 'index'])->name('kpi.index');
     Route::post('kpi', [KpiController::class, 'store'])->name('kpi.store');
