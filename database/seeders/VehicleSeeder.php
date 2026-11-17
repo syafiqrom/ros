@@ -9,16 +9,26 @@ class VehicleSeeder extends Seeder
 {
     public function run(): void
     {
-        $vehicles = [
-            ['plate_number' => 'BKL 1234', 'brand' => 'Isuzu',           'model' => 'NPR 75',     'capacity_metric_ton' => 3,  'capacity_cubic_meter' => 15, 'cost_per_km' => 1.20, 'cost_per_hour' => 25.00, 'status' => 'available'],
-            ['plate_number' => 'WXY 5678', 'brand' => 'Isuzu',           'model' => 'NQR 75',     'capacity_metric_ton' => 5,  'capacity_cubic_meter' => 22, 'cost_per_km' => 1.50, 'cost_per_hour' => 30.00, 'status' => 'available'],
-            ['plate_number' => 'VAB 9012', 'brand' => 'Hino',            'model' => '300 Series', 'capacity_metric_ton' => 5,  'capacity_cubic_meter' => 24, 'cost_per_km' => 1.60, 'cost_per_hour' => 32.00, 'status' => 'available'],
-            ['plate_number' => 'JKL 3456', 'brand' => 'Hino',            'model' => '500 Series', 'capacity_metric_ton' => 10, 'capacity_cubic_meter' => 40, 'cost_per_km' => 2.20, 'cost_per_hour' => 45.00, 'status' => 'on_trip'],
-            ['plate_number' => 'PQR 7890', 'brand' => 'Mitsubishi Fuso', 'model' => 'Canter',     'capacity_metric_ton' => 3,  'capacity_cubic_meter' => 16, 'cost_per_km' => 1.25, 'cost_per_hour' => 26.00, 'status' => 'available'],
-            ['plate_number' => 'DEF 2468', 'brand' => 'Mitsubishi Fuso', 'model' => 'Fighter',    'capacity_metric_ton' => 8,  'capacity_cubic_meter' => 35, 'cost_per_km' => 2.00, 'cost_per_hour' => 40.00, 'status' => 'maintenance'],
-            ['plate_number' => 'MNO 1357', 'brand' => 'UD Trucks',       'model' => 'Kuzer',      'capacity_metric_ton' => 5,  'capacity_cubic_meter' => 23, 'cost_per_km' => 1.55, 'cost_per_hour' => 31.00, 'status' => 'available'],
-            ['plate_number' => 'TUV 8642', 'brand' => 'UD Trucks',       'model' => 'Quester',    'capacity_metric_ton' => 20, 'capacity_cubic_meter' => 60, 'cost_per_km' => 3.50, 'cost_per_hour' => 60.00, 'status' => 'available'],
+
+        $plates = [
+            'BNM8380', 'NDE8380', 'NDG8380', 'VBY8380', 'RV8380', 'VX8380',
+            'WB8380M', 'WA8370F', 'WYB7593', 'AGG2515', 'WUH1637', 'BNU8380',
+            'BFQ1409', 'BEB4975', 'PDS1778', 'PJQ5893', 'WCC7054', 'WDS3732',
+            'WHJ3454', 'JKY6118', 'WW8093', 'BKY4649', 'WFS8705', 'BGA6907',
+            'FA8380', 'CDX8380', 'JDP5663', 'KEL8380', 'NBK9841', 'BJU4159',
+            'JHD', 'W6280P', 'SD8622R', 'BINU',
         ];
+
+        $vehicles = array_map(fn ($plate) => [
+            'plate_number' => $plate,
+            'brand' => 'Isuzu',
+            'model' => 'NPR 75',
+            'capacity_metric_ton' => 3,
+            'capacity_cubic_meter' => 15,
+            'cost_per_km' => 1.20,
+            'cost_per_hour' => 25.00,
+            'status' => 'available',
+        ], $plates);
 
         foreach ($vehicles as $vehicle) {
             // Skip if the plate already exists (includes soft-deleted rows)

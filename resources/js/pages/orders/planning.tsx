@@ -15,6 +15,7 @@ import {
 } from '@/components/reui/kanban';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -26,8 +27,8 @@ type Priority = 'normal' | 'cancel' | 'urgent';
 
 interface Order {
     id: number;
-    daikin_do: string;
-    delivery_point_name: string;
+    vbeln: string;
+    name: string;
     priority: Priority;
     plan_board: string;
     created_at: string;
@@ -36,9 +37,19 @@ interface Order {
 type Columns = Record<string, Order[]>;
 
 const COLUMN_TITLES: Record<string, string> = {
-    morning: 'Morning',
-    pool: 'In Pool',
-    evening: 'Evening',
+    'L01': 'L01',
+    'L02': 'L02',
+    'L03': 'L03',
+    'L04': 'L04',
+    'L05': 'L05',
+    'L06': 'L06',
+    'L07': 'L07',
+    'L08': 'L08',
+    'L09': 'L09',
+    'L10': 'L10',
+    'L11': 'L11',
+    'L12': 'L12',
+    'L13': 'L13',
 };
 
 const PRIORITY_DOT: Record<Priority, string> = {
@@ -78,15 +89,8 @@ function OrderCard({
                             {index + 1}
                         </Badge>
                     )}
-                    <span
-                        className={cn(
-                            'size-2 shrink-0 rounded-full',
-                            PRIORITY_DOT[order.priority],
-                        )}
-                        title={`${order.priority} priority`}
-                    />
                     <span className="line-clamp-1 text-sm font-medium">
-                        {order.delivery_point_name || 'No delivery point'}
+                        {order.name || 'No name'}
                     </span>
                     {order.priority !== 'normal' && (
                         <Badge variant="outline" className="ml-auto capitalize">
@@ -94,32 +98,22 @@ function OrderCard({
                         </Badge>
                     )}
                 </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    {order.daikin_do && (
-                        <div className="flex items-center gap-1">
-                            <Avatar className="size-4">
-                                <AvatarFallback>
-                                    {order.daikin_do}
-                                </AvatarFallback>
-                            </Avatar>
-                            <span className="line-clamp-1">
-                                {order.daikin_do}
-                            </span>
+                <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                    {order.vbeln && (
+                        <div className="flex min-w-0 items-center gap-1">
+                            <span className="truncate tabular-nums">{order.vbeln}</span>
                         </div>
                     )}
                     {order.created_at && (
                         <time
                             dateTime={order.created_at}
-                            className="flex items-center gap-1 text-[10px] whitespace-nowrap tabular-nums"
+                            className="flex shrink-0 items-center gap-1 text-[10px] whitespace-nowrap tabular-nums"
                         >
                             <ClockIcon className="size-3" />
-                            {new Date(order.created_at).toLocaleString(
-                                'en-MY',
-                                {
-                                    dateStyle: 'medium',
-                                    timeStyle: 'short',
-                                },
-                            )}
+                            {new Date(order.created_at).toLocaleString('en-MY', {
+                                dateStyle: 'medium',
+                                timeStyle: 'short',
+                            })}
                         </time>
                     )}
                 </div>
@@ -173,20 +167,22 @@ function OrderColumn({ value, orders, isOverlay, ...props }: OrderColumnProps) {
                     />
                 </CardHeader>
                 <CardContent className="relative">
-                    <KanbanColumnContent
-                        value={value}
-                        className="flex min-h-24 flex-col gap-2.5"
-                    >
-                        {orders.map((order, index) => (
-                            <OrderCard
-                                key={order.id}
-                                order={order}
-                                index={index}
-                                asHandle={!isOverlay}
-                                isOverlay={isOverlay}
-                            />
-                        ))}
-                    </KanbanColumnContent>
+                    <ScrollArea className="h-80">
+                        <KanbanColumnContent
+                            value={value}
+                            className="flex min-h-24 flex-col gap-2.5 p-1 pr-3"
+                        >
+                            {orders.map((order, index) => (
+                                <OrderCard
+                                    key={order.id}
+                                    order={order}
+                                    index={index}
+                                    asHandle={!isOverlay}
+                                    isOverlay={isOverlay}
+                                />
+                            ))}
+                        </KanbanColumnContent>
+                    </ScrollArea>
                     {orders.length === 0 && (
                         <div className="pointer-events-none absolute inset-6 flex items-center justify-center rounded-lg border border-dashed text-xs text-muted-foreground">
                             No orders
@@ -250,7 +246,7 @@ export default function Planning({
                     onValueCommit={handleCommit}
                     getItemValue={(item) => String(item.id)}
                 >
-                    <KanbanBoard className="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-3">
+                    <KanbanBoard className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {Object.entries(columns).map(
                             ([columnValue, orders]) => (
                                 <OrderColumn

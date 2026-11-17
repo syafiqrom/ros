@@ -19,8 +19,7 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
     const filteredOrders = React.useMemo(() => {
         if (!date) return orders;
         return orders.filter(
-            (row) =>
-                row.created_at && isSameDay(parseISO(row.created_at), date),
+            (row) => row.pdate && isSameDay(parseISO(row.pdate), date),
         );
     }, [orders, date]);
 

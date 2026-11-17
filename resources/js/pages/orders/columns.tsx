@@ -9,10 +9,17 @@ import { type DataTableFeatures } from '@/components/ui/data-table-features';
 
 export type Order = {
     id: number;
-    daikin_do: string;
-    address: string;
-    delivery_point_name: string;
-    created_at: string;
+    vbeln: string;
+    pdate: string;
+    name: string;
+    addr1: string;
+    addr2: string;
+    city: string;
+    region: string;
+    tzone: string;
+    volum: string;
+    priority: string;
+    plan_board: string;
 };
 
 const columnHelper = createColumnHelper<DataTableFeatures, Order>();
@@ -43,7 +50,7 @@ export const columns = columnHelper.columns([
         enableSorting: false,
         enableHiding: false,
     }),
-    columnHelper.accessor('daikin_do', {
+    columnHelper.accessor('vbeln', {
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -56,7 +63,12 @@ export const columns = columnHelper.columns([
             </Button>
         ),
     }),
-    columnHelper.accessor('address', { header: 'Address' }),
-    columnHelper.accessor('delivery_point_name', { header: 'Delivery Point' }),
-    columnHelper.accessor('created_at', { header: 'Created At' }),
+    columnHelper.accessor('pdate', { header: 'P Date' }),
+    columnHelper.accessor('name', { header: 'Name' }),
+    columnHelper.accessor('addr1', { header: 'Address' }),
+    columnHelper.accessor('addr2', { header: 'Address' }),
+    columnHelper.accessor('city', { header: 'City' }),
+    columnHelper.accessor('region', { header: 'Region' }),
+    columnHelper.accessor('tzone', { header: 'Timezone' }),
+    columnHelper.accessor('volum', { header: 'Volume' }),
 ]);

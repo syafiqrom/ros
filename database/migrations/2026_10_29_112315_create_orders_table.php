@@ -13,11 +13,18 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('daikin_DO')->unique();
-            $table->string('address')->nullable();
-            $table->string('delivery_point_name')->nullable();
+            $table->string('vbeln');
+            $table->date('pdate');
+            $table->string('name');
+            $table->string('addr1');
+            $table->string('addr2');
+            $table->string('city');
+            $table->string('region');
+            $table->string('tzone');
+            $table->string('volum');
             $table->string('priority')->default('normal');
-            $table->string('plan_board')->default('pool');
+            $table->string('plan_board');
+            $table->char('row_hash', 40)->unique();
             $table->timestamps();
         });
     }

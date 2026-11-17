@@ -7,10 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'daikin_do',
-        'address',
-        'delivery_point_name',
+        'vbeln',
+        'pdate',
+        'name',
+        'addr1',
+        'addr2',
+        'city',
+        'region',
+        'tzone',
+        'volum',
         'priority',
         'plan_board',
+        'row_hash',
     ];
 }
