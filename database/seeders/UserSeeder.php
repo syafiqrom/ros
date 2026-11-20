@@ -13,8 +13,7 @@ class UserSeeder extends Seeder
         $users = [
             ['name' => 'Syafiq Syahrom', 'email' => 'syafiqsyahrom2@gmail.com',    'role' => 'manager',   'status' => 'active'],
             ['name' => 'Admin',         'email' => 'admin@example.com',    'role' => 'manager',   'status' => 'active'],
-            ['name' => 'Planner One',   'email' => 'planner1@example.com', 'role' => 'planner', 'status' => 'active'],
-            ['name' => 'Planner Two',   'email' => 'planner2@example.com', 'role' => 'planner', 'status' => 'active'],
+            ['name' => 'Planner',   'email' => 'planner@example.com', 'role' => 'planner', 'status' => 'active'],
             ['name' => 'Inactive User', 'email' => 'inactive@example.com', 'role' => 'planner', 'status' => 'inactive'],
         ];
 

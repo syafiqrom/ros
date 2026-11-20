@@ -18,6 +18,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('orders/import/{id}/status', [OrderController::class, 'importStatus'])
+        ->name('orders.import.status');
     Route::get('orders/planning', [OrderController::class, 'planning'])->name('orders.planning');
     Route::patch('orders/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
     Route::get('orders/map', [OrderController::class, 'map'])->name('orders.map');

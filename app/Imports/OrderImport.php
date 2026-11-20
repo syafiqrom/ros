@@ -4,16 +4,53 @@ namespace App\Imports;
 
 use App\Models\Order;
 use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpsertColumns;
 use Maatwebsite\Excel\Concerns\WithUpserts;
+use Maatwebsite\Excel\Events\AfterChunk;
+use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Events\ImportFailed;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class OrderImport implements ToModel, WithBatchInserts, WithChunkReading, WithHeadingRow, WithUpsertColumns, WithUpserts
+class OrderImport implements ShouldQueue, ToModel, WithBatchInserts, WithChunkReading, WithEvents, WithHeadingRow, WithUpsertColumns, WithUpserts
 {
+    /** hashes already seen in this chunk (avoids "row affected twice" on upsert) */
+    private array $seen = [];
+
+    public function __construct(private string $importId) {}
+
+    public function registerEvents(): array
+    {
+        return [
+            BeforeImport::class => function (BeforeImport $event) {
+                $rows = array_sum($event->getReader()->getTotalRows());
+                $this->setMeta(['status' => 'processing', 'total' => max(0, $rows - 1)]); // minus heading row
+            },
+            AfterChunk::class => function () {
+                Cache::increment("import:{$this->importId}:processed", $this->chunkSize());
+            },
+            AfterImport::class => function () {
+                $this->setMeta(['status' => 'done']);
+            },
+            ImportFailed::class => function () {
+                $this->setMeta(['status' => 'failed']);
+            },
+        ];
+    }
+
+    private function setMeta(array $changes): void
+    {
+        $key = "import:{$this->importId}";
+        Cache::put($key, array_merge(Cache::get($key, []), $changes), 3600);
+    }
+
     public function model(array $row): ?Order
     {
         $data = [
@@ -25,17 +62,26 @@ class OrderImport implements ToModel, WithBatchInserts, WithChunkReading, WithHe
             'city' => $this->str($row['city'] ?? null),
             'region' => $this->str($row['region'] ?? null),
             'tzone' => $this->str($row['tzone'] ?? null),
-            'volum' => $row['volum'] ?? null,
+            'volum' => $this->num($row['volum'] ?? null),
         ];
 
-        // skip fully empty rows
+        if ($data['tzone'] === null || ! str_starts_with($data['tzone'], 'L')) {
+            return null;
+        }
+
         if (! array_filter($data, fn ($v) => $v !== null)) {
             return null;
         }
 
+        $hash = sha1(json_encode($data));
+        if (isset($this->seen[$hash])) {
+            return null;
+        }
+        $this->seen[$hash] = true;
+
         return new Order($data + [
-            'plan_board' => $data['tzone'], // initial lane
-            'row_hash' => sha1(json_encode($data)),
+            'plan_board' => $data['tzone'],
+            'row_hash' => $hash,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -46,11 +92,6 @@ class OrderImport implements ToModel, WithBatchInserts, WithChunkReading, WithHe
         return 'row_hash';
     }
 
-    /**
-     * Columns to update when a duplicate hash is found.
-     * Since the hash covers all data columns, only updated_at needs touching,
-     * and created_at is preserved.
-     */
     public function upsertColumns(): array
     {
         return ['updated_at'];
@@ -64,6 +105,18 @@ class OrderImport implements ToModel, WithBatchInserts, WithChunkReading, WithHe
     public function chunkSize(): int
     {
         return 500;
+    }
+
+    private function num(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (! is_numeric($value)) {
+            return $this->str($value);
+        }
+
+        return number_format((float) $value, 3, '.', ''); // 1.5, "1.50", 1.5 all hash the same
     }
 
     private function str(mixed $value): ?string

@@ -1,6 +1,7 @@
-import { ComponentProps, useRef, useState } from 'react';
+import { ComponentProps, useEffect, useRef, useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { ClockIcon, GripVerticalIcon } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
+import { SearchIcon, XIcon } from 'lucide-react';
 
 import { Badge } from '@/components/reui/badge';
 import {
@@ -8,55 +9,45 @@ import {
     KanbanBoard,
     KanbanColumn,
     KanbanColumnContent,
-    KanbanColumnHandle,
     KanbanItem,
     KanbanItemHandle,
     KanbanOverlay,
 } from '@/components/reui/kanban';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 Planning.layout = {
     breadcrumbs: [{ title: 'Planning' }],
 };
 
-type Priority = 'normal' | 'cancel' | 'urgent';
+const VOLUME_UNIT = 'm³'; // change if your volum column uses another unit
 
 interface Order {
     id: number;
-    vbeln: string;
-    name: string;
-    priority: Priority;
+    vbeln: string | null;
+    name: string | null;
+    city: string | null;
+    pdate: string | null;
+    volum: number | string | null;
     plan_board: string;
-    created_at: string;
 }
 
 type Columns = Record<string, Order[]>;
 
-const COLUMN_TITLES: Record<string, string> = {
-    'L01': 'L01',
-    'L02': 'L02',
-    'L03': 'L03',
-    'L04': 'L04',
-    'L05': 'L05',
-    'L06': 'L06',
-    'L07': 'L07',
-    'L08': 'L08',
-    'L09': 'L09',
-    'L10': 'L10',
-    'L11': 'L11',
-    'L12': 'L12',
-    'L13': 'L13',
-};
+const toNumber = (v: Order['volum']) => Number(v ?? 0) || 0;
 
-const PRIORITY_DOT: Record<Priority, string> = {
-    normal: 'bg-muted-foreground/50',
-    cancel: 'bg-amber-500',
-    urgent: 'bg-red-500',
-};
+const formatVolume = (n: number) =>
+    n.toLocaleString('en-MY', { maximumFractionDigits: 2 });
+
+function matchesSearch(order: Order, query: string) {
+    if (!query) return true;
+    return [order.name, order.vbeln, order.city].some((field) =>
+        field?.toLowerCase().includes(query),
+    );
+}
 
 interface OrderCardProps extends Omit<
     ComponentProps<typeof KanbanItem>,
@@ -64,6 +55,7 @@ interface OrderCardProps extends Omit<
 > {
     order: Order;
     index?: number;
+    dimmed?: boolean;
     asHandle?: boolean;
     isOverlay?: boolean;
 }
@@ -71,54 +63,42 @@ interface OrderCardProps extends Omit<
 function OrderCard({
     order,
     index,
+    dimmed,
     asHandle,
     isOverlay,
     ...props
 }: OrderCardProps) {
+    const volume = toNumber(order.volum);
+
     const cardContent = (
-        <Card
+        <div
             className={cn(
-                'transition-shadow hover:shadow-md',
+                'rounded-md border bg-card px-2.5 py-1.5 text-card-foreground transition-opacity',
+                'hover:border-foreground/30',
+                dimmed && 'opacity-30',
                 isOverlay && 'ring-2 ring-primary/30',
             )}
         >
-            <CardContent className="space-y-2.5">
-                <div className="flex items-center gap-2">
-                    {index !== undefined && (
-                        <Badge variant="outline" className="tabular-nums">
-                            {index + 1}
-                        </Badge>
-                    )}
-                    <span className="line-clamp-1 text-sm font-medium">
-                        {order.name || 'No name'}
+            <div className="flex items-center gap-2">
+                {index !== undefined && (
+                    <span className="w-5 shrink-0 text-center text-xs tabular-nums text-muted-foreground">
+                        {index + 1}
                     </span>
-                    {order.priority !== 'normal' && (
-                        <Badge variant="outline" className="ml-auto capitalize">
-                            {order.priority}
-                        </Badge>
-                    )}
-                </div>
-                <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                    {order.vbeln && (
-                        <div className="flex min-w-0 items-center gap-1">
-                            <span className="truncate tabular-nums">{order.vbeln}</span>
-                        </div>
-                    )}
-                    {order.created_at && (
-                        <time
-                            dateTime={order.created_at}
-                            className="flex shrink-0 items-center gap-1 text-[10px] whitespace-nowrap tabular-nums"
-                        >
-                            <ClockIcon className="size-3" />
-                            {new Date(order.created_at).toLocaleString('en-MY', {
-                                dateStyle: 'medium',
-                                timeStyle: 'short',
-                            })}
-                        </time>
-                    )}
-                </div>
-            </CardContent>
-        </Card>
+                )}
+                <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                    {order.name || 'No name'}
+                </span>
+                {volume > 0 && (
+                    <span className="shrink-0 text-xs font-medium tabular-nums">
+                        {formatVolume(volume)}
+                    </span>
+                )}
+            </div>
+            <div className="mt-0.5 flex items-center gap-2 pl-7 text-xs text-muted-foreground">
+                <span className="tabular-nums">{order.vbeln}</span>
+                {order.city && <span className="truncate">{order.city}</span>}
+            </div>
+        </div>
     );
 
     return (
@@ -132,78 +112,99 @@ function OrderCard({
     );
 }
 
-interface OrderColumnProps extends Omit<
+interface OrderLaneProps extends Omit<
     ComponentProps<typeof KanbanColumn>,
     'children'
 > {
     orders: Order[];
-    isOverlay?: boolean;
+    query: string;
 }
 
-function OrderColumn({ value, orders, isOverlay, ...props }: OrderColumnProps) {
+function OrderLane({ value, orders, query, ...props }: OrderLaneProps) {
+    const totalVolume = orders.reduce((sum, o) => sum + toNumber(o.volum), 0);
+
     return (
-        <KanbanColumn value={value} {...props}>
-            <Card className="mb-2.5">
-                <CardHeader className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold">
-                            {COLUMN_TITLES[value] ?? value}
-                        </span>
-                        <Badge variant="secondary" className="tabular-nums">
-                            {orders.length}
-                        </Badge>
-                    </div>
-                    <KanbanColumnHandle
-                        render={(handleProps) => (
-                            <Button
-                                {...handleProps}
-                                size="icon"
-                                variant="ghost"
-                                className="size-6"
-                            >
-                                <GripVerticalIcon className="size-4" />
-                            </Button>
-                        )}
-                    />
-                </CardHeader>
-                <CardContent className="relative">
-                    <ScrollArea className="h-80">
-                        <KanbanColumnContent
-                            value={value}
-                            className="flex min-h-24 flex-col gap-2.5 p-1 pr-3"
-                        >
-                            {orders.map((order, index) => (
-                                <OrderCard
-                                    key={order.id}
-                                    order={order}
-                                    index={index}
-                                    asHandle={!isOverlay}
-                                    isOverlay={isOverlay}
-                                />
-                            ))}
-                        </KanbanColumnContent>
-                    </ScrollArea>
+        <KanbanColumn
+            value={value}
+            className="flex h-full w-72 shrink-0 flex-col rounded-lg border bg-muted/30"
+            {...props}
+        >
+            <div className="flex items-center justify-between gap-2 border-b px-3 py-2">
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold">{value}</span>
+                    <Badge variant="secondary" className="tabular-nums">
+                        {orders.length}
+                    </Badge>
+                </div>
+                <span className="text-xs tabular-nums text-muted-foreground">
+                    {formatVolume(totalVolume)} {VOLUME_UNIT}
+                </span>
+            </div>
+
+            <ScrollArea className="min-h-0 flex-1">
+                <KanbanColumnContent
+                    value={value}
+                    className="flex min-h-24 flex-col gap-1.5 p-2"
+                >
+                    {orders.map((order, index) => (
+                        <OrderCard
+                            key={order.id}
+                            order={order}
+                            index={index}
+                            asHandle
+                            dimmed={!matchesSearch(order, query)}
+                        />
+                    ))}
                     {orders.length === 0 && (
-                        <div className="pointer-events-none absolute inset-6 flex items-center justify-center rounded-lg border border-dashed text-xs text-muted-foreground">
-                            No orders
-                        </div>
+                        <p className="py-6 text-center text-xs text-muted-foreground">
+                            Drop orders here
+                        </p>
                     )}
-                </CardContent>
-            </Card>
+                </KanbanColumnContent>
+            </ScrollArea>
         </KanbanColumn>
     );
 }
 
 export default function Planning({
     columns: initialColumns,
+    filters,
 }: {
     columns: Columns;
+    filters: { date: string | null };
 }) {
     const [columns, setColumns] = useState<Columns>(initialColumns);
+    const [search, setSearch] = useState('');
+    const [date, setDate] = useState<Date | undefined>(
+        filters.date ? parseISO(filters.date) : undefined,
+    );
 
     // Latest board state (updated mid-drag) and last state the server confirmed (for rollback).
     const latest = useRef<Columns>(initialColumns);
     const saved = useRef<Columns>(initialColumns);
+
+    // Re-sync when the server sends fresh data (date filter change, reload).
+    useEffect(() => {
+        latest.current = initialColumns;
+        saved.current = initialColumns;
+        setColumns(initialColumns);
+    }, [initialColumns]);
+
+    const query = search.trim().toLowerCase();
+    const allOrders = Object.values(columns).flat();
+    const matchCount = query
+        ? allOrders.filter((o) => matchesSearch(o, query)).length
+        : allOrders.length;
+    const totalVolume = allOrders.reduce((sum, o) => sum + toNumber(o.volum), 0);
+
+    const handleDateChange = (next: Date | undefined) => {
+        setDate(next);
+        router.get(
+            window.location.pathname,
+            next ? { date: format(next, 'yyyy-MM-dd') } : {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    };
 
     const handleChange = (next: Columns) => {
         latest.current = next;
@@ -213,9 +214,9 @@ export default function Planning({
     const handleCommit = () => {
         const snapshot = latest.current;
         const payload = Object.fromEntries(
-            Object.entries(snapshot).map(([status, orders]) => [
-                status,
-                orders.map((t) => t.id),
+            Object.entries(snapshot).map(([slot, orders]) => [
+                slot,
+                orders.map((o) => o.id),
             ]),
         );
 
@@ -239,46 +240,66 @@ export default function Planning({
     return (
         <>
             <Head title="Planning" />
-            <div className="p-4">
+            <div className="flex h-full min-h-0 flex-1 flex-col gap-3 p-4">
+                <div className="flex flex-wrap items-center gap-3">
+                    <div className="relative w-full max-w-xs">
+                        <SearchIcon className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Find customer, DO or city"
+                            className="pl-8"
+                        />
+                    </div>
+
+                    <DatePicker value={date} onChange={handleDateChange} />
+                    {date && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDateChange(undefined)}
+                        >
+                            <XIcon className="size-4" />
+                            All dates
+                        </Button>
+                    )}
+
+                    <p className="ml-auto text-sm text-muted-foreground tabular-nums">
+                        {query
+                            ? `${matchCount} of ${allOrders.length} orders match`
+                            : `${allOrders.length} orders`}
+                        {' · '}
+                        {formatVolume(totalVolume)} {VOLUME_UNIT}
+                    </p>
+                </div>
+
                 <Kanban
                     value={columns}
                     onValueChange={handleChange}
                     onValueCommit={handleCommit}
                     getItemValue={(item) => String(item.id)}
                 >
-                    <KanbanBoard className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {Object.entries(columns).map(
-                            ([columnValue, orders]) => (
-                                <OrderColumn
-                                    key={columnValue}
-                                    value={columnValue}
-                                    orders={orders}
-                                />
-                            ),
-                        )}
+                    <KanbanBoard className="flex min-h-0 flex-1 gap-3 overflow-x-auto pb-2">
+                        {Object.entries(columns).map(([slot, orders]) => (
+                            <OrderLane
+                                key={slot}
+                                value={slot}
+                                orders={orders}
+                                query={query}
+                            />
+                        ))}
                     </KanbanBoard>
 
                     <KanbanOverlay>
-                        {({ value, variant }) => {
+                        {({ value }) => {
                             const id = String(value);
-
-                            if (variant === 'column') {
-                                return (
-                                    <OrderColumn
-                                        value={id}
-                                        orders={columns[id] ?? []}
-                                        isOverlay
-                                    />
-                                );
-                            }
-
-                            const column = Object.values(columns).find((list) =>
+                            const lane = Object.values(columns).find((list) =>
                                 list.some((o) => String(o.id) === id),
                             );
-                            const index = column?.findIndex(
+                            const index = lane?.findIndex(
                                 (o) => String(o.id) === id,
                             );
-                            const order = column?.[index ?? -1];
+                            const order = lane?.[index ?? -1];
 
                             return order ? (
                                 <OrderCard

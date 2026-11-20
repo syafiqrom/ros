@@ -48,8 +48,9 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
                         <ImportPopover
                             title="Import Order"
                             description="Select Order files to import."
-                            accept=".xlsx,.xls,.csv"
+                            accept=".xlsx,.xls,.csv,.txt"
                             route={store().url}
+                            statusUrl={(id) => `/orders/import/${id}/status`}
                         />
                     }
                 />

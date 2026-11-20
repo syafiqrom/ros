@@ -14,16 +14,18 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('vbeln');
-            $table->date('pdate');
-            $table->string('name');
-            $table->string('addr1');
-            $table->string('addr2');
-            $table->string('city');
-            $table->string('region');
-            $table->string('tzone');
-            $table->string('volum');
-            $table->string('priority')->default('normal');
-            $table->string('plan_board');
+            $table->date('pdate')->nullable();
+            $table->string('name')->nullable();
+            $table->string('addr1')->nullable();
+            $table->string('addr2')->nullable();
+            $table->string('city')->nullable();
+            $table->string('region')->nullable();
+            $table->string('tzone')->nullable();
+            $table->string('volum')->nullable();
+            $table->string('priority')->default('normal')->nullable();
+            $table->string('plan_board')->nullable();
+            $table->unsignedInteger('position')->default(0);
+            $table->index(['plan_board', 'position']);
             $table->char('row_hash', 40)->unique();
             $table->timestamps();
         });
