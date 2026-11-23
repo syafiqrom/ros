@@ -190,6 +190,37 @@ export default function Planning({
         setColumns(initialColumns);
     }, [initialColumns]);
 
+    // Top scrollbar: a thin mirror strip kept in sync with the board's scroll position.
+    const topRef = useRef<HTMLDivElement>(null);
+    const bodyRef = useRef<HTMLDivElement>(null);
+    const [boardWidth, setBoardWidth] = useState(0);
+
+    useEffect(() => {
+        const body = bodyRef.current;
+        if (!body) return;
+
+        const update = () => setBoardWidth(body.scrollWidth);
+        update();
+
+        const observer = new ResizeObserver(update);
+        observer.observe(body);
+        if (body.firstElementChild) observer.observe(body.firstElementChild);
+
+        return () => observer.disconnect();
+    }, []);
+
+    const syncFromTop = () => {
+        if (topRef.current && bodyRef.current) {
+            bodyRef.current.scrollLeft = topRef.current.scrollLeft;
+        }
+    };
+
+    const syncFromBody = () => {
+        if (topRef.current && bodyRef.current) {
+            topRef.current.scrollLeft = bodyRef.current.scrollLeft;
+        }
+    };
+
     const query = search.trim().toLowerCase();
     const allOrders = Object.values(columns).flat();
     const matchCount = query
@@ -253,16 +284,6 @@ export default function Planning({
                     </div>
 
                     <DatePicker value={date} onChange={handleDateChange} />
-                    {date && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDateChange(undefined)}
-                        >
-                            <XIcon className="size-4" />
-                            All dates
-                        </Button>
-                    )}
 
                     <p className="ml-auto text-sm text-muted-foreground tabular-nums">
                         {query
@@ -273,22 +294,37 @@ export default function Planning({
                     </p>
                 </div>
 
+                <div
+                    ref={topRef}
+                    onScroll={syncFromTop}
+                    aria-hidden
+                    className="overflow-x-auto overflow-y-hidden"
+                >
+                    <div style={{ width: boardWidth, height: 1 }} />
+                </div>
+
                 <Kanban
                     value={columns}
                     onValueChange={handleChange}
                     onValueCommit={handleCommit}
                     getItemValue={(item) => String(item.id)}
                 >
-                    <KanbanBoard className="flex min-h-0 flex-1 gap-3 overflow-x-auto pb-2">
-                        {Object.entries(columns).map(([slot, orders]) => (
-                            <OrderLane
-                                key={slot}
-                                value={slot}
-                                orders={orders}
-                                query={query}
-                            />
-                        ))}
-                    </KanbanBoard>
+                    <div
+                        ref={bodyRef}
+                        onScroll={syncFromBody}
+                        className="min-h-0 flex-1 overflow-x-auto pb-2"
+                    >
+                        <KanbanBoard className="flex h-full w-max gap-3">
+                            {Object.entries(columns).map(([slot, orders]) => (
+                                <OrderLane
+                                    key={slot}
+                                    value={slot}
+                                    orders={orders}
+                                    query={query}
+                                />
+                            ))}
+                        </KanbanBoard>
+                    </div>
 
                     <KanbanOverlay>
                         {({ value }) => {

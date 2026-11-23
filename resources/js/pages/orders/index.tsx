@@ -42,7 +42,7 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
                 <DataTable
                     columns={columns}
                     data={filteredOrders}
-                    filterColumn="Daikin_DO"
+                    filterColumn="vbeln"
                     filterPlaceholder="Search Daikin DO..."
                     toolbar={
                         <ImportPopover
