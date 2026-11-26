@@ -8,6 +8,8 @@ import {
     Sheet,
     Package,
     Waypoints,
+    File,
+    Briefcase
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -27,6 +29,8 @@ import { index as vehicles } from '@/routes/vehicles';
 import { index as users } from '@/routes/users';
 import { index as kpiReports } from '@/routes/kpi';
 import { index as orders, planning as orderPlanning } from '@/routes/orders';
+import { index as logsheets } from '@/routes/logsheets';
+import { planning as jobs } from '@/routes/jobs';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -62,6 +66,16 @@ const managerNavItems: NavItem[] = [
         title: 'Planning',
         href: orderPlanning(),
         icon: Waypoints,
+    },
+    {
+        title: 'Log Sheet',
+        href: logsheets(),
+        icon: File,
+    },
+    {
+        title: 'Job',
+        href: jobs(),
+        icon: Briefcase,
     },
 ];
 

@@ -28,11 +28,13 @@ export default function OrderPage({ orders }: { orders: Order[] }) {
             <Head title="Order" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 <div className="flex items-center justify-between">
-                    <Tabs defaultValue="all" className="w-full">
+                    <Tabs defaultValue="new" className="w-full">
+                        {/* TODO */}
                         <TabsList>
-                            <TabsTrigger value="all">All</TabsTrigger>
                             <TabsTrigger value="new">New</TabsTrigger>
-                            <TabsTrigger value="pooled">Pooled</TabsTrigger>
+                            <TabsTrigger value="planned">Planned</TabsTrigger>
+                            <TabsTrigger value="completed">Completed</TabsTrigger>
+                            <TabsTrigger value="all">All</TabsTrigger>
                         </TabsList>
                     </Tabs>
 

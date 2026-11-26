@@ -69,6 +69,6 @@ export const columns = columnHelper.columns([
     columnHelper.accessor('addr2', { header: 'Address' }),
     columnHelper.accessor('city', { header: 'City' }),
     columnHelper.accessor('region', { header: 'Region' }),
-    columnHelper.accessor('tzone', { header: 'Timezone' }),
+    columnHelper.accessor('tzone', { header: 'Zone' }),
     columnHelper.accessor('volum', { header: 'Volume' }),
 ]);

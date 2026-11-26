@@ -62,7 +62,8 @@ class OrderImport implements ShouldQueue, ToModel, WithBatchInserts, WithChunkRe
             'city' => $this->str($row['city'] ?? null),
             'region' => $this->str($row['region'] ?? null),
             'tzone' => $this->str($row['tzone'] ?? null),
-            'volum' => $this->num($row['volum'] ?? null),
+            // 'volum' => $this->num($row['volum'] ?? null), TODO
+            'volum' => 0.000,
         ];
 
         if ($data['tzone'] === null || ! str_starts_with($data['tzone'], 'L')) {

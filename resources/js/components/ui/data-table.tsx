@@ -9,6 +9,7 @@ import {
     type ColumnVisibilityState,
     type PaginationState,
     type RowData,
+    type RowSelectionState,
     type SortingState,
 } from "@tanstack/react-table"
 
@@ -71,7 +72,11 @@ interface DataTableProps<TData extends RowData> {
     filterPlaceholder?: string
     createHref?: React.ComponentProps<typeof Link>["href"]
     createLabel?: string
-    toolbar?: React.ReactNode
+    getRowId?: (row: TData, index: number) => string
+    initialSelectedIds?: string[]
+    toolbar?:
+    | React.ReactNode
+    | ((ctx: { selectedIds: string[]; selectedRows: TData[]; clear: () => void }) => React.ReactNode)
 }
 
 interface RowsPerPageProps {
@@ -112,13 +117,19 @@ export function DataTable<TData extends RowData>({
     filterPlaceholder,
     createHref,
     createLabel,
+    getRowId,
+    initialSelectedIds,
     toolbar,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] =
         React.useState<ColumnVisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
+    // const [rowSelection, setRowSelection] = React.useState({})
+    // const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
+    const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(
+        () => Object.fromEntries((initialSelectedIds ?? []).map((id) => [id, true])),
+    )
     const [pagination, setPagination] = React.useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -128,6 +139,7 @@ export function DataTable<TData extends RowData>({
         features,
         data,
         columns,
+        getRowId,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
@@ -136,6 +148,9 @@ export function DataTable<TData extends RowData>({
         state: { sorting, columnFilters, columnVisibility, rowSelection, pagination },
     })
 
+    const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id])
+    const selectedRows = table.getSelectedRowModel().rows.map((r) => r.original)
+    const clear = () => setRowSelection({})
     const pageCount = table.getPageCount()
     const currentPage = pagination.pageIndex
 
@@ -174,13 +189,12 @@ export function DataTable<TData extends RowData>({
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                <div className="ml-auto flex items-center gap-2">
-                    {toolbar}
+                <div className="flex items-center gap-2 ml-auto">
+                    {typeof toolbar === "function"
+                        ? toolbar({ selectedIds, selectedRows, clear })
+                        : toolbar}
                     {createHref && createLabel && (
-                        <Button
-                            className="ml-auto"
-                            render={<Link href={createHref} />}
-                        >
+                        <Button render={<Link href={createHref} />}>
                             {createLabel}
                         </Button>
                     )}
